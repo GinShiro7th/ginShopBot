@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1891387921,
+    "username": "GinShiro7th",
+    "command": "start",
+    "isAdmin": true,
+    "chats": []
+  },
+  {
+    "id": 6178208266,
+    "username": "evgrg_tg",
+    "command": "start",
+    "isAdmin": true,
+    "chats": []
+  },
+  {
+    "id": 19233654,
+    "username": "rifa511",
+    "command": "start",
+    "isAdmin": true,
+    "chats": [
+      "https://t.me/test_zaprosy",
+      "СУЕТОЛОГ"
+    ]
+  }
+]
