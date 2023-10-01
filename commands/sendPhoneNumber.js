@@ -3,6 +3,7 @@ const Session = require('../db/sessions');
 
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
+const start = require('../commands/start');
 
 module.exports = async function(msg, bot, option, userToCheck){
   const user = await User.findOne({
@@ -13,19 +14,10 @@ module.exports = async function(msg, bot, option, userToCheck){
   
   console.log(user.toJSON());
 
-  const kb = {
-    keyboard: [
-      [{text: "Поделится номером", request_contact: true}]
-    ],
-    resize_keyboard: true
-  }
-
   switch (option){
     case '1':
       await bot.sendMessage(msg.chat.id, 'Здравствуйте, для того, чтобы полноценно пользоватся ботом, вам нужно предоставить доступ к вашему аккаунту, дабы бот мог отслеживать сообщения в ваших чатах и отправлять пользователям сообщения, о том, что такой то товар есть у вас');
-      await bot.sendMessage(msg.chat.id, 'Для начала введите ваш номер телефона', {
-        reply_markup: JSON.stringify(kb)  
-      });
+      await bot.sendMessage(msg.chat.id, 'Для начала введите ваш номер телефона');
       await user.update({
         Command: 'getPhoneNumber'
       });
@@ -33,7 +25,7 @@ module.exports = async function(msg, bot, option, userToCheck){
 
     case '2':
   
-      const phone = msg.contact ? msg.contact.phone_number : null;
+      const phone = msg.text;
 
       const apiId = 20160941;
       const apiHash = "ff2b66e4f21a9781fd293ed181b20f8b";
@@ -43,24 +35,20 @@ module.exports = async function(msg, bot, option, userToCheck){
         connectionRetries: 5,
       });
 
-      await bot.sendMessage(msg.chat.id, "Введите код, который пришел вам");
-
       async function getCode() {
-        new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+          await bot.sendMessage(msg.chat.id, "Введите код, который пришел вам");
           bot.on('message', (msg) => {
-            console.log('bot.on -', msg.text);
             resolve(msg.text)
           });
         })
       }
     
-      console.log('Phone', phone);
-
       await client.start({
         phoneNumber: phone,
         password: '123',
         phoneCode: async () => await getCode(),
-        onError: (e) => console.log(e)
+        onError: (e) => console.log(e) 
       });
       
       await client.connect();
@@ -68,7 +56,10 @@ module.exports = async function(msg, bot, option, userToCheck){
       console.log("You should now be connected.");
       console.log(client.session.save()); // Save this string to avoid logging in again
       await client.sendMessage("me", { message: "Hello!" });
-      
+       
+      await user.update({
+        Command: 'start'
+      });
       break
   }
 }

@@ -26,7 +26,8 @@ module.exports = async function (msg, bot) {
       return await sendPhoneNumber(msg, bot, '1', user);
     } else if (user.Command === 'getPhoneNumber'){
       return await sendPhoneNumber(msg, bot, '2', user);
-    }
+    };
+
     if (msg.text === "/start") {
       return await start(msg, bot, user);
     } else if (msg.text === "👤Добавить партнера") {
