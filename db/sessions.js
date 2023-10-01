@@ -3,7 +3,7 @@ const sequelize = require('./db');
 
 const Session = sequelize.define('Session', {
   StringSession: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(400),
     allowNull: false
   },
   FromUser: {

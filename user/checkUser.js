@@ -15,6 +15,7 @@ module.exports = async function(userToCheck, msg, bot){
       TgID: userToCheck.id
     }
   });
+  
   if (user){
     return user.toJSON();
   } else if (usersList.includes(`${Username}`)){
