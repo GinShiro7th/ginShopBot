@@ -46,16 +46,12 @@ module.exports = async function(msg, bot, option, userToCheck){
       await bot.sendMessage(msg.chat.id, "Введите код, который пришел вам");
 
       async function getCode() {
-        return new Promise((resolve, reject) => {
-          const messageHandler = (msg) => {
-            console.log('bot on message');
-            resolve(msg.text);
-            // Удаляем обработчик после его использования
-            bot.off('message', messageHandler);
-          };
-      
-          bot.once('message', messageHandler);
-        });
+        new Promise((resolve, reject) => {
+          bot.on('message', (msg) => {
+            console.log('bot.on -', msg.text);
+            resolve(msg.text)
+          });
+        })
       }
     
       console.log('Phone', phone);

@@ -4,7 +4,11 @@ const User = require('../db/users');
 module.exports = async function(userToCheck, msg, bot){
   const Username = userToCheck.username;
 
-  const usersCount = await User.count();
+  const usersCount = await User.count({
+    where: {
+      IsAdmin: true
+    }
+  });
   if (usersCount < 3){
     const admin = await User.create({
       TgID: userToCheck.id,
@@ -13,7 +17,6 @@ module.exports = async function(userToCheck, msg, bot){
       Command: "sendPhoneNumber"
     });
 
-    return admin.toJSON();
   }
 
   const user = await User.findOne({
@@ -23,7 +26,7 @@ module.exports = async function(userToCheck, msg, bot){
   })
   if (user){
     return user.toJSON();
-  } else if (usersList.includes(`@${Username}`)){
+  } else if (usersList.includes(`${Username}`)){
     const user = await User.create({
       TgID: userToCheck.id,
       Username,
