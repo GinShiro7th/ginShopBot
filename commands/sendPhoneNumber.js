@@ -111,11 +111,13 @@ module.exports = async function (msg, bot, option, userToCheck) {
 
         const me = await client.getMe();
 
+        client.get
+
         await user.update({
           Command: "start",
         });
 
-        //await addHandlers(client, msg);
+        await addHandlers(client);
 
         await bot.sendMessage(
           msg.chat.id,

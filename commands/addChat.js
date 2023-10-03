@@ -7,7 +7,7 @@ module.exports = async function (msg, bot, option) {
     where: {
       TgID: msg.from.id
     }
-  })
+  });
 
   switch (option) {
     case "1":

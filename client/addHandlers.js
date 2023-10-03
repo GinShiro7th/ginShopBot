@@ -1,36 +1,48 @@
-const { ChatGetter } = require("telegram/tl/custom")
+const { Api } = require('telegram');
 
 const Chat = require('../db/chats');
 
-module.exports = async function(client, msg){
 
+module.exports = async function(client){
   client.addEventHandler(async (update) => {
     
-    console.log(update);
+    const clientInfo = await client.getMe();
+    
+    if (update.message === '123')
+      console.log('update.message', update);
 
-    const chats = await Chat.findAll({
-      where: {
-        FromUser: msg.from.id
-      },
-      attributes: ['Name']
-    });
+    if (update.message && update.message.peerId){
+      const peer = update.message.peerId;
+      
+      if (peer.chatId || peer.channelId){
+        
+        const msgText = update.message.message;
+        //console.log('peer', peer, '\ntext', msgText);
+        
+        const UserChatsInfo = await Chat.findAll({
+          where: {
+            FromUser: clientInfo.id
+          },
+          attributes: ['Name']
+        });
 
-    for (const chat of chats){
-      const chatName = chat.Name;
-      try {
-        const chatId = await client.getChatId(chatName);
-        console.log(`Chat ID for ${chatName}: ${chatId}`);
-      } catch (error) {
-        console.error(`Error while getting chat ID for ${chatName}: ${error.message}`);
+        const userChats = UserChatsInfo.map(chat => chat.Name); 
+
+        const chat = peer.chatId ? peer.chatId : peer.channelId;
+
+        await client.getDialogs();
+        const entity = await client.getEntity(chat);
+        
+        console.log('user chats', userChats);
+        console.log('chat title', entity.title);
+
+        if (userChats.includes(entity.title)){
+          
+          await client.sendMessage(update.message.fromId.userId, {message: msgText});
+
+        }
       }
     }
-
-    if (update instanceof ChatGetter) {
-      // Обработка новых сообщений в чате
-      const message = update.message;
-      if (message) {
-        console.log(`Received message: ${message.text}`);
-      }
-    }
+    
   });
 }

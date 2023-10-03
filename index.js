@@ -4,6 +4,7 @@ const checkCommand = require('./functions/checkCommand');
 const checkCallbackData = require('./functions/checkCallbackData');
 
 const connectToDb = require('./db/connect');
+const connectClientFromDB = require('./client/connectClientFromDB');
 
 //test bot token
 const TOKEN = "6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s";
@@ -23,3 +24,4 @@ bot.on('callback_query', async (query)=>{
 
 
 connectToDb();
+connectClientFromDB();

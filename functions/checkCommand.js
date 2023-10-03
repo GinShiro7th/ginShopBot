@@ -17,6 +17,7 @@ const delKeywords = require("../commands/delKeywords");
 const addMinusKeywords = require("../commands/addMinusKeywords");
 const delMinusKeywords = require("../commands/delMinusKeywords");
 const sendPhoneNumber = require('../commands/sendPhoneNumber');
+const setMainChat = require("../commands/setMainChat");
 
 module.exports = async function (msg, bot) {
   const user = await checkUser(msg.from, msg, bot);
@@ -98,6 +99,9 @@ module.exports = async function (msg, bot) {
         break;
       case "getFileForAdd":
         return await addFromFile(msg, bot, '2', msg.from.id);
+        break;
+      case "setMainChat":
+        return await setMainChat(msg, bot, '2', msg.from.id);
         break;
       default:
         switch (user.Command.split("_")[0]) {

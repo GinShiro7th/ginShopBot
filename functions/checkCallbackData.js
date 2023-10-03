@@ -5,6 +5,7 @@ const addKeywords = require("../commands/addKeywords");
 const delKeywords = require("../commands/delKeywords");
 const addMinusKeywords = require("../commands/addMinusKeywords");
 const delMinusKeywords = require("../commands/delMinusKeywords");
+const setMainChat = require('../commands/setMainChat');
 
 module.exports = async function(query, bot){
   switch(query.data){
@@ -16,6 +17,9 @@ module.exports = async function(query, bot){
       break;
     case 'addFromFile':
       return await addFromFile(query.message, bot, '1', query.from.id);
+      break;
+    case 'setMainChat':
+      return await setMainChat(query.message, bot, '1', query.from.id);
       break;
     default:
       switch(query.data.split('_')[0]){ 

@@ -9,6 +9,11 @@ const Chat = sequelize.define('Chat', {
   FromUser: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  isMain: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 });
 
