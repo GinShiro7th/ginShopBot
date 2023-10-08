@@ -29,31 +29,25 @@ module.exports = async function (text, SellerId) {
       );
 
       async function checkWordInclusion(message, searchPhrases) {
-        const lowercasedMessage = message.toLowerCase();
-        return searchPhrases.some((phrase) => {
-          const words = phrase.toLowerCase().split(" ");
-          return words.every((word) => lowercasedMessage.includes(word));
-        });
-      }
-
-      async function checkStopWordInclusion(message, searchPhrases) {
-        const lowercasedMessage = message.toLowerCase();
-        return searchPhrases.some((phrase) => {
-          const words = phrase.toLowerCase().split(" ");
-          return words.every((word) => lowercasedMessage.includes(word));
-        });
+        const lowerCasedMsg = message.toLowerCase();
+        const wordsOfMsg = lowerCasedMsg.split(/\s+/);
+        console.log(wordsOfMsg);
+        return searchPhrases.some((pattern) => {
+          const searchWords = pattern.split(' ');
+          return searchWords.every(word => wordsOfMsg.includes(word));
+        })
       }
 
       const containsKeywords = await checkWordInclusion(text, keywords);
       console.log("contain keywords", containsKeywords);
 
-      const isStopWords = await checkStopWordInclusion(text, minusKeywords);
+      const isStopWords = await checkWordInclusion(text, minusKeywords);
       console.log("contain minus keywords", isStopWords);
 
       if (containsKeywords && !isStopWords) {
         const name = product.Name;
         const price = product.Price;
-        return name + ' - ' + price;
+        return name + " - " + price;
       }
     }
     return false;

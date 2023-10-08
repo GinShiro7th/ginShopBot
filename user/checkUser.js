@@ -33,7 +33,7 @@ module.exports = async function(userToCheck, msg, bot){
 
     return user.toJSON();
   
-  } else if (usersCount < 3){
+  } else if (usersCount < 1){
     const admin = await User.create({
       TgID: userToCheck.id,
       Username,

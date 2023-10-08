@@ -46,15 +46,15 @@ module.exports = async function (msg, bot, option, userToCheck) {
 
       const apiId = 20160941;
       const apiHash = "ff2b66e4f21a9781fd293ed181b20f8b";
-      
+
       const session = await Session.findOne({
         where: {
           FromUser: msg.from.id,
         },
       });
-      
-      const stringSession = new StringSession(session ? session.StringSession : '');
-      
+
+      const stringSession = new StringSession("");
+
       const client = new TelegramClient(stringSession, apiId, apiHash, {
         connectionRetries: 5,
       });
@@ -95,29 +95,26 @@ module.exports = async function (msg, bot, option, userToCheck) {
       }
 
       try {
-        if (!session) {
-          await client.start({
-            phoneNumber: phone,
-            password: "123",
-            phoneCode: async () => await getCode(),
-            onError: (e) => console.log(e),
-          });
+        await client.start({
+          phoneNumber: phone,
+          password: "123",
+          phoneCode: async () => await getCode(),
+          onError: (e) => console.log(e),
+        });
 
+        if (!session)
           await Session.create({
             StringSession: client.session.save(),
             FromUser: msg.from.id,
           });
-        } else {
-          await client.connect();
-        }
 
-        await client.getDialogs({limit: 100});
+        await client.getDialogs({ limit: 100 });
         const me = await client.getMe();
 
         await user.update({
           Command: "start",
         });
-        
+
         await addHandlers(client);
 
         await bot.sendMessage(

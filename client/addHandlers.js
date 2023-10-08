@@ -59,7 +59,6 @@ module.exports = async function (client) {
                 clientId - ${clientInfo.username}
               `
             );
-
             if (
               mainChat &&
               (chatTitle === mainChat || chatUsername === mainChat) &&
@@ -81,9 +80,13 @@ module.exports = async function (client) {
                   clientInfo.id.value
                 );
                 if (answer) {
-                  await client.sendMessage(fromUser.username, {
-                    message: answer,
-                  });
+                  setTimeout(
+                    async () =>
+                      await client.sendMessage(fromUser.username, {
+                        message: answer,
+                      }),
+                    2 * 60 * 1000
+                  );
                 }
               }
             }
@@ -94,7 +97,7 @@ module.exports = async function (client) {
       console.log("error in handler:", err);
     }
   }, new NewMessage({}));
-  
+
   //         const chat = chatBase[chatId] ?
   //         chatBase[chatId] :
   //         (async () => {
