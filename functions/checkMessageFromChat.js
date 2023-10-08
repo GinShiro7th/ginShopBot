@@ -31,7 +31,6 @@ module.exports = async function (text, SellerId) {
       async function checkWordInclusion(message, searchPhrases) {
         const lowerCasedMsg = message.toLowerCase();
         const wordsOfMsg = lowerCasedMsg.split(/\s+/);
-        console.log(wordsOfMsg);
         return searchPhrases.some((pattern) => {
           const searchWords = pattern.split(' ');
           return searchWords.every(word => wordsOfMsg.includes(word));
