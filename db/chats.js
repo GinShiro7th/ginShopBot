@@ -6,8 +6,13 @@ const Chat = sequelize.define('Chat', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  Type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "sell"
+  },
   FromUser: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
   },
   isMain: {

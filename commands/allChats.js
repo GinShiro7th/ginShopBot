@@ -18,18 +18,45 @@ module.exports = async function(msg, bot){
   })
   
   if (chats.length) {
-   
-    const list = chats.reduce(
-      (acc, cur, index) => acc + '\n' + (index+1) + ' - ' + cur.Name + (cur.isMain ? ' - 👑Главный' : ''), 
-      '📝Список всех ваших чатов:');
     
+    const head = '📝Список всех ваших чатов:';
+    const main = '👑Главный - ';
+    const mainChatInfo = await Chat.findOne({
+      where: {
+        isMain: true
+      }
+    });
+    const mainChat = mainChatInfo ? mainChatInfo.Name : 'не назначен' 
+
+    const buy = 'Чаты для покупки: ';
+    const buyChatsInfo = await Chat.findAll({
+      where: {
+        FromUser: msg.from.id,
+        Type: 'buy',
+        isMain: false
+      }
+    });
+    const buyChats = buyChatsInfo.length ? buyChatsInfo.map(item => item.Name).join(', ') : 'не добавлены';
+
+    const sell = 'Чаты для продажи: ';
+    const sellChatsIfno = await Chat.findAll({
+      where: {
+        Type: 'sell',
+        FromUser: msg.from.id
+      }
+    });
+    const sellChats = sellChatsIfno.length ? sellChatsIfno.map(item => item.Name).join(', ') : 'не добавлены'
+
+    const message = head + '\n\n' + main + mainChat + '\n\n' + buy + buyChats + '\n\n' + sell + sellChats
+
+
     const kb = {
       inline_keyboard: [
         [{text: 'Назначить главный чат', callback_data: 'setMainChat'}]
       ]
     }
 
-    await bot.sendMessage(msg.chat.id, list, {
+    await bot.sendMessage(msg.chat.id, message, {
       reply_markup: JSON.stringify(kb),
       disable_web_page_preview: true
     });

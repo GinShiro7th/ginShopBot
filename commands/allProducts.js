@@ -1,12 +1,16 @@
 const importFromFile = require('../models/keyboard/importFromFile');
 const product = require('../db/products');
 const User = require('../db/users');
+const Sequelize = require('sequelize');
 
 module.exports = async function (msg, bot) {
   const userProducts = await product.findAll({
     where: { SellerId : msg.from.id},
-    attributes: ['Name', "productID"]
-  })
+    attributes: ['Name', "productID", "Price"],
+    order: [
+      [Sequelize.fn('UPPER', Sequelize.col('Name')), 'ASC']
+    ]
+  });
 
   if (!userProducts.length) {
     await bot.sendMessage(msg.chat.id, "⚫️У вас пока нет товаров на продажу", {
@@ -29,11 +33,11 @@ module.exports = async function (msg, bot) {
 
     for (let i=0; i<userProducts.length; i++){
       if (i % 30 || i === 0){
-        dashBoard += `\n${i+1} - ${userProducts[i].dataValues.Name}, ID - ${userProducts[i].dataValues.productID}`
+        dashBoard += `\n${userProducts[i].Name} - ${userProducts[i].Price}, ID - ${userProducts[i].productID}`
       } else {
         messages.push(dashBoard);
         dashBoard = '';
-        dashBoard += `\n${i+1} - ${userProducts[i].dataValues.Name}, ID - ${userProducts[i].dataValues.productID}`  
+        dashBoard += `\n${userProducts[i].Name} - ${userProducts[i].Price}, ID - ${userProducts[i].productID}`
       }
     };
 

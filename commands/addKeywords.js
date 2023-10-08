@@ -12,7 +12,7 @@ module.exports = async function (msg, bot, option, userId, productID) {
     case "1":
       await bot.sendMessage(
         msg.chat.id,
-        "Введите ключевые слова, которые надо добавить, через пробел"
+        "Введите ключевые слова, которые надо добавить, через запятую"
       );
       await user.update({
         Command: `addKeywords_${productID}`,

@@ -11,11 +11,8 @@ const downloadFile = require("../functions/downloadFile");
 const expectedColumns = [
   "Наличие",
   "ID",
-  "Бренд",
-  "Категория",
-  "Подкатегория 1",
-  "Подкатегория 2",
   "Наименование",
+  "Цена",
   "Ключевые слова",
   "Минус слова",
 ];
@@ -79,6 +76,9 @@ module.exports = async function (msg, bot, option, userId) {
           if (missingColumns.length === 0) {
             console.log("Все ожидаемые столбцы присутствуют в XLSX файле.");
           } else {
+            fs.unlink(savePath, (err) => {
+              if (err) console.log(err);
+            });
             return await bot.sendMessage(
               msg.chat.id,
               "Ваш xlsx файл не соответсвует принимаемому формату. В файле должны быть именно такие столбцы:\n" +
@@ -108,11 +108,8 @@ module.exports = async function (msg, bot, option, userId) {
             const newProduct = await Product.create({
               isAvaible: addedProduct["Наличие"],
               productID: addedProduct["ID"],
-              Brand: addedProduct["Бренд"],
-              Category: addedProduct["Категория"],
-              Subcategory1: addedProduct["Подкатегория 1"],
-              Subcategory2: addedProduct["Подкатегория 2"],
               Name: addedProduct["Наименование"],
+              Price: addedProduct["Цена"],
               SellerId: userId,
             });
 
@@ -149,7 +146,7 @@ module.exports = async function (msg, bot, option, userId) {
           if (err) console.log(err);
         });
       } catch (err) {
-        console.error("Ошибка при чтении файла:", err.message);
+        console.error("Ошибка при чтении файла:", err);
       }
 
       // Получение данных из первого листа (worksheet) в файле

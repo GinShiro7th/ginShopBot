@@ -18,6 +18,8 @@ const addMinusKeywords = require("../commands/addMinusKeywords");
 const delMinusKeywords = require("../commands/delMinusKeywords");
 const sendPhoneNumber = require('../commands/sendPhoneNumber');
 const setMainChat = require("../commands/setMainChat");
+const ignoreList = require('../commands/ignoreList');
+const addToIgnoreList = require("../commands/addToIgnoreList");
 
 module.exports = async function (msg, bot) {
   const user = await checkUser(msg.from, msg, bot);
@@ -49,6 +51,14 @@ module.exports = async function (msg, bot) {
       return await allProducts(msg, bot);
     } else if (msg.text === "✏️Редактировать товар") {
       return await editProduct(msg, bot, "0", null);
+    } else if (msg.text === "😶Игнор список"){
+      return await ignoreList(msg, bot);
+    } else if (msg.text === "➕Добавить пользователя в игнор список"){
+      return await addToIgnoreList(msg, bot, '1');
+    } else if (msg.text === "Чат для покупки"){
+      return await addChat(msg, bot, '3');
+    } else if (msg.text === "Чат для продажи"){
+      return await addChat(msg, bot, '4');
     }
 
     switch (user.Command) {
@@ -70,18 +80,6 @@ module.exports = async function (msg, bot) {
       case "addProductID":
         return await addProduct(msg, bot, "01");
         break;
-      case 'addBrand':
-        return await addProduct(msg, bot, '012');
-        break;
-      case "addCategory":
-        return await addProduct(msg, bot, "02");
-        break;
-      case "addSubCategory1":
-        return await addProduct(msg, bot, "03");
-        break;
-      case "addSubCategory2":
-        return await addProduct(msg, bot, "1");
-        break;
       case "addKeywords":
         return await addProduct(msg, bot, "2");
         break;
@@ -90,6 +88,9 @@ module.exports = async function (msg, bot) {
         break;
       case "addAnswerText":
         return await addProduct(msg, bot, "4");
+        break;
+      case "addPrice":
+        return await addProduct(msg, bot, '5');
         break;
       case "editProductNum":
         return await editProduct(msg, bot, "1", null);
@@ -103,22 +104,13 @@ module.exports = async function (msg, bot) {
       case "setMainChat":
         return await setMainChat(msg, bot, '2', msg.from.id);
         break;
+      case 'AddToIgnoreList':
+        return await addToIgnoreList(msg, bot, '2');
+        break;
       default:
         switch (user.Command.split("_")[0]) {
           case "editProductCount":
             return await editProduct(msg, bot, "11", user.Command.split("_")[1]);
-            break;
-          case "editProductBrand":
-            return await editProduct(msg, bot, "2", user.Command.split("_")[1]);
-            break;
-          case "editProductCategory":
-            return await editProduct(msg, bot, "21", user.Command.split("_")[1]);
-            break;
-          case "editProductSubCategory1":
-            return await editProduct(msg, bot, "22", user.Command.split("_")[1]);
-            break;
-          case "editProductSubCategory2":
-            return await editProduct(msg, bot, "23", user.Command.split("_")[1]);
             break;
           case "editProductKeywords":
             return await editProduct(msg, bot, "3", user.Command.split("_")[1]);
@@ -128,6 +120,9 @@ module.exports = async function (msg, bot) {
             break;
           case "editProductAnswer":
             return await editProduct(msg, bot, "5", user.Command.split("_")[1]);
+            break;
+          case 'editPrice':
+            return await editProduct(msg, bot, '6', user.Command.split("_")[1]);
             break;
           case "loadFromFile":
             return await loadFromFile(msg, bot, "2", msg.from.id);

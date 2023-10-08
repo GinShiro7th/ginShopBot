@@ -14,7 +14,7 @@ module.exports = async function (msg, bot, option, userId, productID) {
     case "1":
       await bot.sendMessage(
         msg.chat.id,
-        "Введите минус слова, которые надо удалить, через пробел"
+        "Введите минус слова, которые надо удалить, через запятую"
       );
       await user.update({
         Command: `delMinusKeywords_${productID}`,

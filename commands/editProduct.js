@@ -41,7 +41,7 @@ module.exports = async function (msg, bot, option, productID) {
       if (!productToEdit) {
         return await bot.sendMessage(
           chatId,
-          "Номер не соответствует ни одному товару из списка"
+          "Айди не соответствует ни одному товару из списка"
         );
       }
 
@@ -64,74 +64,7 @@ module.exports = async function (msg, bot, option, productID) {
         user,
         bot
       );
-      await user.update({
-        Command: `editProductBrand_${productID}`,
-      });
-      message =
-        "Текущий брэнд продукта:\n" +
-        productToEdit.dataValues.Brand +
-        "\n\nВведите новый брэнд";
-      break;
-    case "2":
-      productToEdit = await updateProductField(
-        productID,
-        "Brand",
-        msg.text,
-        chatId,
-        user,
-        bot
-      );
-      await user.update({
-        Command: `editProductCategory_${productID}`,
-      });
-      message =
-        "Текущяя категория продукта:\n" +
-        productToEdit.dataValues.Category +
-        "\n\nВведите новую категорию";
-      break;
-    case "21":
-      productToEdit = await updateProductField(
-        productID,
-        "Category",
-        msg.text,
-        chatId,
-        user,
-        bot
-      );
-      await user.update({
-        Command: `editProductSubCategory1_${productID}`,
-      });
-      message =
-        "Текущяя первая подкатегория продукта:\n" +
-        productToEdit.dataValues.Subcategory1 +
-        "\n\nВведите новую первую подкатегорию";
-      break;
-    case "22":
-      productToEdit = await updateProductField(
-        productID,
-        "Subcategory1",
-        msg.text,
-        chatId,
-        user,
-        bot
-      );
-      await user.update({
-        Command: `editProductSubCategory2_${productID}`,
-      });
-      message =
-        "Текущяя вторая подкатегория продукта:\n" +
-        productToEdit.dataValues.Subcategory2 +
-        "\n\nВведите новую вторую подкатегорию";
-      break;
-    case "23":
-      productToEdit = await updateProductField(
-        productID,
-        "Subcategory2",
-        msg.text,
-        chatId,
-        user,
-        bot
-      );
+      
       await user.update({
         Command: `editProductKeywords_${productID}`,
       });
@@ -245,7 +178,7 @@ module.exports = async function (msg, bot, option, productID) {
       });
 
       message =
-        "Текущее ответ бота:\n" + prd.Name + "\n\nВведите новый ответ для бота";
+        "Текущее название товара:\n" + prd.Name + "\n\nВведите новое название для товара";
       break;
     case "5":
       productToEdit = await updateProductField(
@@ -257,11 +190,25 @@ module.exports = async function (msg, bot, option, productID) {
         bot
       );
       await user.update({
+        Command: `editPrice_${productID}`,
+      });
+
+      message = "Текущая цена товара:\n"+productToEdit.Price+"\n\nВведите новую цену для товара";
+      break;
+    case '6':
+      productToEdit = await updateProductField(
+        productID,
+        "Price",
+        msg.text,
+        chatId,
+        user,
+        bot
+      );
+      await user.update({
         Command: "start",
       });
 
       message = "Товар успешно редактирован";
-      break;
   }
 
   const editKeywordsBtns = {
@@ -282,7 +229,7 @@ module.exports = async function (msg, bot, option, productID) {
     ],
   };
 
-  if (option === "23") {
+  if (option === "11") {
     await bot.sendMessage(chatId, message, {
       reply_markup: JSON.stringify(editKeywordsBtns)
     });
@@ -290,7 +237,7 @@ module.exports = async function (msg, bot, option, productID) {
     await bot.sendMessage(chatId, message, {
       reply_markup: JSON.stringify(editMinusKeywordsBtns)
     });
-  } else if (option !== "5" && option !== "0") {
+  } else if (option !== "6" && option !== "0") {
     await bot.sendMessage(chatId, message, editProductKeyboard.reply());
   } else if (user.dataValues.IsAdmin) {
     await bot.sendMessage(chatId, message, adminStartKeyboard.reply());

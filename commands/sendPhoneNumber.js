@@ -20,8 +20,14 @@ module.exports = async function (msg, bot, option, userToCheck) {
     case "1":
       await bot.sendMessage(
         msg.chat.id,
-        "Здравствуйте, для того, чтобы полноценно пользоватся ботом, вам нужно предоставить доступ к вашему аккаунту, дабы бот мог отслеживать сообщения в ваших чатах и отправлять пользователям сообщения, о том, что такой то товар есть у вас"
+        "Здравствуйте, для того, чтобы полноценно пользоватся ботом, вам нужно предоставить доступ к вашему аккаунту, дабы бот мог отслеживать сообщения в ваших чатах и отправлять пользователям сообщения, о том, что такой то товар есть у вас",
+        {
+          reply_markup: {
+            remove_keyboard: true,
+          },
+        }
       );
+
       await bot.sendMessage(
         msg.chat.id,
         "Для начала введите ваш номер телефона"
@@ -89,11 +95,7 @@ module.exports = async function (msg, bot, option, userToCheck) {
       }
 
       try {
-        console.log("You should now be connected.");
-        console.log(client.session.save());
-
         if (!session) {
-
           await client.start({
             phoneNumber: phone,
             password: "123",
@@ -109,19 +111,18 @@ module.exports = async function (msg, bot, option, userToCheck) {
           await client.connect();
         }
 
+        await client.getDialogs({limit: 100});
         const me = await client.getMe();
-
-        client.get
 
         await user.update({
           Command: "start",
         });
-
+        
         await addHandlers(client);
 
         await bot.sendMessage(
           msg.chat.id,
-          `signed in successfully as ${me.username}`,
+          `Успешно подключено к аккаунту ${me.username}`,
           {
             reply_markup: {
               remove_keyboard: true,
@@ -134,7 +135,12 @@ module.exports = async function (msg, bot, option, userToCheck) {
         console.log("login error", err.message);
         await bot.sendMessage(
           msg.chat.id,
-          "Вы ввели неверный номер или код, попробуйте снова. Введите номер телефона"
+          "Вы ввели неверный номер или код, попробуйте снова. Введите номер телефона",
+          {
+            reply_markup: {
+              remove_keyboard: true,
+            },
+          }
         );
         await user.update({
           Command: "getPhoneNumber",

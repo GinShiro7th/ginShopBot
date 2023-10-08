@@ -26,7 +26,7 @@ module.exports = async function(msg, bot, option){
         await bot.sendMessage(msg.chat.id, '⭕️Партнер уже был добавлен в список');  
       } else { 
         usersToAdd.push(userToAdd);
-        await bot.sendMessage(msg.chat.id, '✅Партнер добавлен, теперь он может пользоватся ботом');
+        await bot.sendMessage(msg.chat.id, `✅Партнер ${userToAdd} добавлен, теперь он может пользоватся ботом`);
       }
       fs.writeFile('database/usersToAdd.json', JSON.stringify(usersToAdd, null, 2), (err)=>{if (err) console.log(err.message)});
       

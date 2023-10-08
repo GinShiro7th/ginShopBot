@@ -12,7 +12,7 @@ module.exports = async function(msg, bot, option, userId){
   
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "Пришлите название чата, который нужно сделать главным. Из него будет идти копирование ваших сообщений в другие чаты");
+      await bot.sendMessage(msg.chat.id, "Пришлите название чата для покупки, который нужно сделать главным. Из него будет идти копирование ваших сообщений в другие чаты");
       await user.update({
         Command: 'setMainChat'
       }); 
@@ -22,7 +22,8 @@ module.exports = async function(msg, bot, option, userId){
       const userChat = await Chat.findOne({
         where: {
           Name: mainChat,
-          FromUser: userId
+          FromUser: userId,
+          Type: 'buy'
         }
       });
       if (!userChat){
@@ -35,7 +36,8 @@ module.exports = async function(msg, bot, option, userId){
         isMain: false
       },{
         where: {
-          isMain: true
+          isMain: true,
+          FromUser: msg.from.id
         }
       });
 

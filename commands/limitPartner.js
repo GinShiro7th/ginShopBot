@@ -1,6 +1,10 @@
 const fs = require('fs');
 
 const User = require('../db/users');
+const Chat = require('../db/chats');
+const Keyword = require('../db/keywords');
+const MinusKeyword = require('../db/minusKeywords');
+const Product = require('../db/products');
 
 module.exports = async function(msg, bot, option){
   const usersToAdd = require('../database/usersToAdd.json');
@@ -13,7 +17,7 @@ module.exports = async function(msg, bot, option){
 
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "#️⃣Пришлите юзернейм того партнера из списка, которому надо ограничить доступ");
+      await bot.sendMessage(msg.chat.id, "#️⃣Пришлите юзернейм (без @ или ссылки) того партнера из списка, которому надо ограничить доступ");
       await user.update({
         Command: "limitPartner"
       });
@@ -30,6 +34,26 @@ module.exports = async function(msg, bot, option){
       const userIndex = usersToAdd.findIndex(item => item === Username);
 
       if(userToLimit){
+        await Chat.destroy({
+          where: {
+            FromId: userToLimit.TgID
+          }
+        });
+        await Keyword.destroy({
+          where: {
+            UserID: userToLimit.TgID
+          }
+        });
+        await MinusKeyword.destroy({
+          where: {
+            UserID: userToLimit.TgID
+          }
+        });
+        await Product.destroy({
+          where: {
+            SellerId: userToLimit.TgID
+          }
+        });
         await userToLimit.destroy();
       } else if (userIndex !== -1){
         usersToAdd.splice(userIndex, 1);

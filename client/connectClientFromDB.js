@@ -16,6 +16,7 @@ module.exports = async function(){
     try{
       await client.connect();
       const clientInfo = await client.getMe();
+      await client.getDialogs({limit: 100});
       await addHandlers(client);
       console.log(`${clientInfo.username} connected`);
     } catch (err) {

@@ -5,6 +5,8 @@ const User = require('./users');
 const GlobalMinusKeyword = require('./globalMinusKeywords');
 const Keyword = require('./keywords');
 const minusKeywords = require('./minusKeywords');
+const IgnoreList = require('./ignoreList');
+const Session = require('./sessions');
 
 module.exports = async function(){
   try {

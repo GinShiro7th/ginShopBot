@@ -30,11 +30,8 @@ module.exports = async function (msg, bot, userId, username) {
   const productData = productList.map((prod) => ({
     "Наличие": prod.dataValues.isAvaible,
     "ID": prod.dataValues.productID,
-    "Бренд": prod.dataValues.Brand,
-    "Категория": prod.dataValues.Category,
-    "Подкатегория 1": prod.dataValues.Subcategory1,
-    "Подкатегория 2": prod.dataValues.Subcategory2,
     "Наименование": prod.dataValues.Name,
+    "Цена": prod.dataValues.Price,
     "Ключевые слова": keywords
       .filter((item) => item.dataValues.ProductID === prod.dataValues.productID)
       .map((item) => item.dataValues.Keyword)
@@ -53,11 +50,8 @@ module.exports = async function (msg, bot, userId, username) {
   const columnWidths = [
     { wpx: 50 },
     { wpx: 50 },
-    { wpx: 50 },
+    { wpx: 80 },
     { wpx: 70 },
-    { wpx: 100 },
-    { wpx: 100 },
-    { wpx: 200 },
     { wpx: 200 },
     { wpx: 200 },
   ];

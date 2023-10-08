@@ -7,7 +7,7 @@ const Session = sequelize.define('Session', {
     allowNull: false
   },
   FromUser: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
   }
 });

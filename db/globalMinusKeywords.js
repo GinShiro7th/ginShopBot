@@ -7,7 +7,7 @@ const GlobalMinusKeyword = sequelize.define('GlobalMinusKeyword', {
     allowNull: false
   },
   FromUser: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
   }
 });

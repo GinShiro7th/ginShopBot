@@ -36,13 +36,10 @@ module.exports = async function (msg, bot, option) {
       products[listIndex].productList.push({
         count,
         id: "",
-        brand: "",
-        category: "",
-        subCategory1: "",
-        subCategory2: "",
         keywords: "",
         minusKeywords: "",
         answer: "",
+        price: "",
       });
       await user.update({
         Command: "addProductID",
@@ -54,47 +51,6 @@ module.exports = async function (msg, bot, option) {
         products[listIndex].productList.length - 1
       ].id = id;
 
-      await user.update({
-        Command: "addBrand",
-      });
-
-      await bot.sendMessage(msg.chat.id, "Введите брэнд товара");
-      break;
-    case "012":
-      const brand = msg.text;
-      products[listIndex].productList[
-        products[listIndex].productList.length - 1
-      ].brand = brand;
-      await user.update({
-        Command: "addCategory",
-      });
-      await bot.sendMessage(msg.chat.id, "Введите категорию");
-      break;
-    case "02":
-      const category = msg.text;
-      products[listIndex].productList[
-        products[listIndex].productList.length - 1
-      ].category = category;
-      await user.update({
-        Command: "addSubCategory1",
-      });
-      await bot.sendMessage(msg.chat.id, "Введите первую подкатегорию");
-      break;
-    case "03":
-      const subCategory1 = msg.text;
-      products[listIndex].productList[
-        products[listIndex].productList.length - 1
-      ].subCategory1 = subCategory1;
-      await user.update({
-        Command: "addSubCategory2",
-      });
-      await bot.sendMessage(msg.chat.id, "Введите вторую подкатегорию");
-      break;
-    case "1":
-      const subCategory2 = msg.text;
-      products[listIndex].productList[
-        products[listIndex].productList.length - 1
-      ].subCategory2 = subCategory2;
       await user.update({
         Command: "addKeywords",
       });
@@ -118,7 +74,7 @@ module.exports = async function (msg, bot, option) {
       products[listIndex].productList[
         products[listIndex].productList.length - 1
       ].minusKeywords = minusKeywords;
-      await bot.sendMessage(msg.chat.id, "Введите ответ для бота");
+      await bot.sendMessage(msg.chat.id, "Введите название товара");
       await user.update({
         Command: "addAnswerText",
       });
@@ -129,6 +85,17 @@ module.exports = async function (msg, bot, option) {
         products[listIndex].productList.length - 1
       ].answer = answerText;
 
+      await bot.sendMessage(msg.chat.id, "Введите цену товара");
+      await user.update({
+        Command: "addPrice",
+      });
+      break;
+    case '5':
+      const price = msg.text;
+      products[listIndex].productList[
+        products[listIndex].productList.length - 1
+      ].price = price;
+      
       const addedProduct =
         products[listIndex].productList[
           products[listIndex].productList.length - 1
@@ -150,11 +117,8 @@ module.exports = async function (msg, bot, option) {
           const newProduct = await product.create({
             isAvaible: addedProduct.count,
             productID: addedProduct.id,
-            Brand: addedProduct.brand,
-            Category: addedProduct.category,
-            Subcategory1: addedProduct.subCategory1,
-            Subcategory2: addedProduct.subCategory2,
             Name: addedProduct.answer,
+            Price: addedProduct.price,
             SellerId: products[listIndex].userId,
           });
 
@@ -187,7 +151,7 @@ module.exports = async function (msg, bot, option) {
           
           console.log("новый товар добавлен в базу");
         } catch (err) {
-          console.log("ошибка при добавлении товара в базу");
+          console.log("ошибка при добавлении товара в базу", err.message);
         }
 
         products[listIndex].productList.pop();
