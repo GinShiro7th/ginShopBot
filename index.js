@@ -9,6 +9,9 @@ const connectClientFromDB = require("./client/connectClientFromDB");
 const User = require("./db/users");
 
 //test bot token
+
+/* ПОДАРИТЕ АЙФОН ПОЖАЛУЙСТА :( */
+
 const TOKEN = "6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s";
 
 const bot = new TgBot(TOKEN, { polling: true });

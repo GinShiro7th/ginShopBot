@@ -1,5 +1,5 @@
 const Chat = require("../db/chats");
-const { Api } = require('telegram');
+const { Api } = require("telegram");
 const checkMessageFromChat = require("../functions/checkMessageFromChat");
 const IgnoreList = require("../db/ignoreList");
 const { NewMessage } = require("telegram/events");
@@ -13,63 +13,77 @@ module.exports = async function (client) {
       const clientInfo = await client.getMe();
 
       if (update.peerId.chatId || update.peerId.channelId) {
-
         const userChatsInfo = await Chat.findAll({
           where: {
             FromUser: clientInfo.id,
           },
         });
 
-        const chatNames = userChatsInfo.map(item => item.Name);
+        const chatNames = userChatsInfo.map((item) =>
+          item.Name.replace("@", "")
+        );
 
-        const entity = await client.getEntity(update.peerId.chatId ? update.peerId.chatId : update.peerId.channelId);
-        const chat = entity.title;
+        const entity = await client.getEntity(
+          update.peerId.chatId ? update.peerId.chatId : update.peerId.channelId
+        );
+        const chatTitle = entity.title;
+        const chatUsername = entity.username;
 
-        console.log(chatNames);
-        console.log(chat);
-
-        if (chatNames.includes(chat)){
-
-          console.log(update);
-
-          const fromUser = await client.getEntity(update.fromId.userId);
+        if (chatNames.includes(chatTitle) || chatNames.includes(chatUsername)) {
+          const fromUser = await client.getEntity(BigInt(update.fromId.userId));
           const ignoreListInfo = await IgnoreList.findAll({
             where: {
-              FromSeller: clientInfo.id
-            }
+              FromSeller: clientInfo.id,
+            },
           });
           if (userChatsInfo.length) {
             const sellChats = userChatsInfo
               .filter((item) => item.Type === "sell")
-              .map((item) => item.Name);
+              .map((item) => item.Name.replace("@", ""));
             const buyChats = userChatsInfo
               .filter((item) => item.Type === "buy" && !item.isMain)
-              .map((item) => item.Name);
-            const mainChat = userChatsInfo.find((item) => item.isMain);
+              .map((item) => item.Name.replace("@", ""));
+            const mainChatInfo = userChatsInfo.find((item) => item.isMain);
+            const mainChat = mainChatInfo
+              ? mainChatInfo.Name.replace("@", "")
+              : "";
 
             console.log(
               `
-                chat - ${chat},
-                mainChat - ${mainChat ? mainChat.Name : ''},
-                fromId - ${update.fromId.value},
-                clientId - ${clientInfo.id.value}
+                chat title - ${chatTitle},
+                chat username - ${chatUsername},
+                mainChat - ${mainChat ? mainChat : ""},
+                byuChats - ${buyChats},
+                sellChats - ${sellChats},
+                from - ${fromUser.username},
+                clientId - ${clientInfo.username}
               `
             );
 
-            if (mainChat){
-              if (chat === mainChat.Name && update.fromId.value === clientInfo.id.value) {
-                console.log('admin from main chat:', update.message);
-                for (const chat of buyChats){
-                  await client.sendMessage(chat, {message: update.message});
-                }
+            if (
+              mainChat &&
+              (chatTitle === mainChat || chatUsername === mainChat) &&
+              fromUser.username === clientInfo.username
+            ) {
+              console.log("admin from main chat:", update.message);
+              for (const chat of buyChats) {
+                await client.sendMessage(chat, { message: update.message });
               }
-            } else if (sellChats.includes(chat)) {
-              const ignoreList = ignoreListInfo.map(item => item.UserName);
-              if (!ignoreList.includes(fromUser.username)){
-                console.log('from sell chat');
-                const answer = await checkMessageFromChat(update.message, clientInfo.id.value);
-                if (answer){
-                  await client.sendMessage(fromUser.username, {message: answer});
+            } else if (
+              sellChats.includes(chatTitle) ||
+              sellChats.includes(chatUsername)
+            ) {
+              const ignoreList = ignoreListInfo.map((item) => item.UserName);
+              if (!ignoreList.includes(fromUser.username)) {
+                console.log("from sell chat");
+                const answer = await checkMessageFromChat(
+                  update.message,
+                  clientInfo.id.value
+                );
+                if (answer) {
+                  await client.sendMessage(fromUser.username, {
+                    message: answer,
+                  });
                 }
               }
             }
@@ -80,35 +94,8 @@ module.exports = async function (client) {
       console.log("error in handler:", err);
     }
   }, new NewMessage({}));
-  // client.addEventHandler(eventPrint, new NewMessage({}));
-
-  // async function eventPrint(event) {
-  //   const message = event.message;
-
-  //   try {
-  //     const peerId = message.peerId;
-  //     const clientInfo = await client.getMe();
-  //     if (peerId.chatId || peerId.channelId) {
-  //       const chatId = peerId.chatId
-  //         ? peerId.chatId.value
-  //         : peerId.channelId.value;
-
-  //       const userChatsInfo = await Chat.findAll({
-  //         where: {
-  //           FromUser: clientInfo.id,
-  //         },
-  //       });
-
-  //       if (userChatsInfo.length) {
-  //         const sellChats = userChatsInfo
-  //           .filter((item) => item.Type === "sell")
-  //           .map((item) => item.Name);
-  //         const buyChats = userChatsInfo
-  //           .filter((item) => item.Type === "buy" && !item.isMain)
-  //           .map((item) => item.Name);
-  //         const mainChat = userChatsInfo.find((item) => item.isMain);
-      
-  //         const chat = chatBase[chatId] ? 
+  
+  //         const chat = chatBase[chatId] ?
   //         chatBase[chatId] :
   //         (async () => {
   //           if (peerId.chatId){
@@ -133,9 +120,9 @@ module.exports = async function (client) {
   //           }
   //           return chatBase[chatId];
   //         })()
-          
+
   //         console.log(chat);
-           /*const chat = entity.title;
+  /*const chat = entity.title;
           if (
             chat === mainChat.Name &&
             message.fromId.userId.value === clientInfo.id.value
@@ -152,10 +139,9 @@ module.exports = async function (client) {
               await client.sendMessage(fromUser.username, { message: answer });
             }
           }*/
-    //     }
-    //   }
-    // } catch (err) {
-    //   console.log("error in handler", err);
-    // }
+  //     }
+  //   }
+  // } catch (err) {
+  //   console.log("error in handler", err);
+  // }
 };
-
