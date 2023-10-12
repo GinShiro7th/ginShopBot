@@ -1,13 +1,13 @@
 const fs = require('fs');
 
-const User = require('../db/users');
-const Chat = require('../db/chats');
-const Keyword = require('../db/keywords');
-const MinusKeyword = require('../db/minusKeywords');
-const Product = require('../db/products');
+const User = require('../../db/users');
+const Chat = require('../../db/chats');
+const Keyword = require('../../db/keywords');
+const MinusKeyword = require('../../db/minusKeywords');
+const Product = require('../../db/products');
 
 module.exports = async function(msg, bot, option){
-  const usersToAdd = require('../database/usersToAdd.json');
+  const usersToAdd = require('../../database/usersToAdd.json');
 
   const user = await User.findOne({
     where: {

@@ -1,7 +1,7 @@
-const User = require('../db/users');
+const User = require('../../db/users');
 
 module.exports = async function(msg, bot){
-  const usersToAdd = require('../database/usersToAdd.json');
+  const usersToAdd = require('../../database/usersToAdd.json');
   
   const partners = await User.findAll({
     where: {

@@ -1,6 +1,6 @@
-const importFromFile = require('../models/keyboard/importFromFile');
-const product = require('../db/products');
-const User = require('../db/users');
+const importFromFile = require('../../models/keyboard/importFromFile');
+const product = require('../../db/products');
+const User = require('../../db/users');
 const Sequelize = require('sequelize');
 
 module.exports = async function (msg, bot) {

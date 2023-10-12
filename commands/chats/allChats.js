@@ -1,6 +1,6 @@
 const fs = require('fs');
-const User = require('../db/users');
-const Chat = require('../db/chats');
+const User = require('../../db/users');
+const Chat = require('../../db/chats');
 
 
 module.exports = async function(msg, bot){
@@ -23,7 +23,8 @@ module.exports = async function(msg, bot){
     const main = '👑Главный - ';
     const mainChatInfo = await Chat.findOne({
       where: {
-        isMain: true
+        isMain: true,
+        FromUser: msg.from.id
       }
     });
     const mainChat = mainChatInfo ? mainChatInfo.Name : 'не назначен' 

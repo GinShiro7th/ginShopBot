@@ -1,12 +1,12 @@
 const fs = require("fs");
 const xlsx = require("xlsx");
 
-const User = require("../db/users");
-const Product = require("../db/products");
-const Keyword = require("../db/keywords");
-const MinusKeyword = require("../db/minusKeywords");
+const User = require("../../db/users");
+const Product = require("../../db/products");
+const Keyword = require("../../db/keywords");
+const MinusKeyword = require("../../db/minusKeywords");
 
-const downloadFile = require("../functions/downloadFile");
+const downloadFile = require("../../functions/downloadFile");
 
 const expectedColumns = [
   "Наличие",

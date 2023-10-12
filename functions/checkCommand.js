@@ -1,25 +1,32 @@
 const checkUser = require("../user/checkUser");
 
 const start = require("../commands/start");
-const addPartner = require("../commands/addPartner");
-const allPartners = require("../commands/allPartners");
-const limitPartner = require("../commands/limitPartner");
-const addChat = require("../commands/addChat");
-const allChats = require("../commands/allChats");
-const deleteChat = require("../commands/deleteChat");
-const addProduct = require("../commands/addProduct");
-const allProducts = require("../commands/allProducts");
-const editProduct = require("../commands/editProduct");
-const loadFromFile = require("../commands/loadFromFile");
-const addFromFile = require("../commands/addFromFile");
+const addPartner = require("../commands/partners/addPartner");
+const allPartners = require("../commands/partners/allPartners");
+const limitPartner = require("../commands/partners/limitPartner");
+const addChat = require("../commands/chats/addChat");
+const allChats = require("../commands/chats/allChats");
+const deleteChat = require("../commands/chats/deleteChat");
+const addProduct = require("../commands/products/addProduct");
+const allProducts = require("../commands/products/allProducts");
+const editProduct = require("../commands/products/editProduct");
+const loadFromFile = require("../commands/products/loadFromFile");
+const addFromFile = require("../commands/products/addFromFile");
 const addKeywords = require("../commands/addKeywords");
 const delKeywords = require("../commands/delKeywords");
 const addMinusKeywords = require("../commands/addMinusKeywords");
 const delMinusKeywords = require("../commands/delMinusKeywords");
 const sendPhoneNumber = require('../commands/sendPhoneNumber');
-const setMainChat = require("../commands/setMainChat");
+const setMainChat = require("../commands/chats/setMainChat");
 const ignoreList = require('../commands/ignoreList');
 const addToIgnoreList = require("../commands/addToIgnoreList");
+const deleteFromIgnoreList = require("../commands/deleteFromIgnoreList");
+const allGlobalMinusKeywords = require("../commands/allGlobalMinusKeywords");
+const addGlobalMinusKeywords = require("../commands/addGlobalMinusKeywords");
+const delGlobalMinusKeywords = require("../commands/delGlobalMinusKeywords");
+const switchBotState = require("../commands/switchBotState");
+const addMinusKeywordsTemplate = require("../commands/templates/addMinusKeywordsTemplate");
+const allTemplates = require("../commands/templates/allTemplates");
 
 module.exports = async function (msg, bot) {
   const user = await checkUser(msg.from, msg, bot);
@@ -53,14 +60,25 @@ module.exports = async function (msg, bot) {
       return await editProduct(msg, bot, "0", null);
     } else if (msg.text === "😶Игнор список"){
       return await ignoreList(msg, bot);
-    } else if (msg.text === "➕Добавить пользователя в игнор список"){
+    } else if (msg.text === "➕Добавить пользователей в игнор список"){
       return await addToIgnoreList(msg, bot, '1');
+    } else if (msg.text === "➖Убрать пользователей из игнор списка"){
+      return await deleteFromIgnoreList(msg, bot, '1');
+    } else if (msg.text === "🔎Общие минус слова"){
+      return await allGlobalMinusKeywords(msg, bot);
     } else if (msg.text === "Чат для покупки"){
       return await addChat(msg, bot, '3');
     } else if (msg.text === "Чат для продажи"){
       return await addChat(msg, bot, '4');
+    } else if (msg.text === "⏯Вкл/выкл бота"){
+      return await switchBotState(msg, bot);
+    } else if (msg.text === "🔖Добавить шаблон минус слов"){
+      return await addMinusKeywordsTemplate(msg, bot, '1', null);
+    } else if (msg.text === "📋Все шаблоны"){
+      return await allTemplates(msg, bot);
+    } else if (msg.text === "🔧Редактировать шаблон"){
+      return 
     }
-
     switch (user.Command) {
       case "addPartner":
         return await addPartner(msg, bot, "2");
@@ -107,6 +125,18 @@ module.exports = async function (msg, bot) {
       case 'AddToIgnoreList':
         return await addToIgnoreList(msg, bot, '2');
         break;
+      case 'deleteFromIgnoreList':
+        return await deleteFromIgnoreList(msg, bot, '2');
+        break;
+      case 'addGlobalMinusKeywords':
+        return await addGlobalMinusKeywords(msg, bot, '2', msg.from.id);
+        break;
+      case 'delGlobalMinusKeywords':
+        return await delGlobalMinusKeywords(msg, bot, '2', msg.from.id);
+        break;
+      case 'addTemplateTitle':
+        return await addMinusKeywordsTemplate(msg, bot, '2', null);
+        break;
       default:
         switch (user.Command.split("_")[0]) {
           case "editProductCount":
@@ -138,6 +168,9 @@ module.exports = async function (msg, bot) {
             break;
           case 'delMinusKeywords':
             return await delMinusKeywords(msg, bot, '2', msg.from.id, user.Command.split('_')[1]);
+            break;
+          case 'addTemplateKeywords':
+            return await addMinusKeywordsTemplate(msg, bot, '3', user.Command.split('_')[1]);
             break;
         }
     }

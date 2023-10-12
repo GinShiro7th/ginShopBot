@@ -1,5 +1,5 @@
-const User = require('../db/users');
-const Chat = require('../db/chats');
+const User = require('../../db/users');
+const Chat = require('../../db/chats');
 
 module.exports = async function(msg, bot, option){
 

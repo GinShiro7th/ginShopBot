@@ -1,4 +1,5 @@
 const Chat = require("../db/chats");
+const BotState = require('../db/botState');
 const { Api } = require("telegram");
 const checkMessageFromChat = require("../functions/checkMessageFromChat");
 const IgnoreList = require("../db/ignoreList");
@@ -12,6 +13,14 @@ module.exports = async function (client) {
     try {
       const clientInfo = await client.getMe();
 
+      const botState = await BotState.findOne({
+        where: {
+          FromUser: clientInfo.id
+        }
+      });
+
+      if (!botState.IsActive) return;
+
       if (update.peerId.chatId || update.peerId.channelId) {
         const userChatsInfo = await Chat.findAll({
           where: {
@@ -23,8 +32,10 @@ module.exports = async function (client) {
           item.Name.replace("@", "")
         );
 
+        const chatId = update.peerId.chatId ? update.peerId.chatId : update.peerId.channelId;  
+
         const entity = await client.getEntity(
-          update.peerId.chatId ? update.peerId.chatId : update.peerId.channelId
+          chatId
         );
         const chatTitle = entity.title;
         const chatUsername = entity.username;
@@ -50,23 +61,35 @@ module.exports = async function (client) {
 
             console.log(
               `
-                chat title - ${chatTitle},
-                chat username - ${chatUsername},
-                mainChat - ${mainChat ? mainChat : ""},
-                byuChats - ${buyChats},
-                sellChats - ${sellChats},
-                from - ${fromUser.username},
-                clientId - ${clientInfo.username}
+               chat title - ${chatTitle},
+               chat username - ${chatUsername},
+               mainChat - ${mainChat ? mainChat : ""},
+               from - ${fromUser.username},
+               clientId - ${clientInfo.username}
+               update message - ${update.message}
               `
             );
+
+
             if (
               mainChat &&
               (chatTitle === mainChat || chatUsername === mainChat) &&
               fromUser.username === clientInfo.username
             ) {
               console.log("admin from main chat:", update.message);
+              let i = 0;
               for (const chat of buyChats) {
-                await client.sendMessage(chat, { message: update.message });
+                i++;
+                setTimeout(async () => {
+                  try {
+                    await client.sendMessage(chat, { message: update.message });
+                  } catch (err) {
+                    console.log(
+                      "err sending message from main chat:",
+                      err.message
+                    );
+                  }
+                }, i * 1000);
               }
             } else if (
               sellChats.includes(chatTitle) ||
@@ -94,57 +117,8 @@ module.exports = async function (client) {
         }
       }
     } catch (err) {
-      console.log("error in handler:", err);
+      if (!err.message.includes('input entity for {"userId"'))
+        console.log("error in handler:", err);
     }
   }, new NewMessage({}));
-
-  //         const chat = chatBase[chatId] ?
-  //         chatBase[chatId] :
-  //         (async () => {
-  //           if (peerId.chatId){
-  //             const res = await client.invoke(
-  //               new Api.messages.GetChats({
-  //                 id: [chatId],
-  //               })
-  //             );
-  //             console.log(res.chats[0]);
-  //             chatBase[chatId] = res.chats[0].title;
-  //           } else {
-  //             const res = await client.invoke(
-  //               new Api.channels.GetFullChannel({
-  //                   channel: new Api.InputChannel({
-  //                       channelId: peerId.channelId.value,
-  //                       accessHash: 0,  // Для примера. Необходимо получить реальный accessHash
-  //                   }),
-  //               })
-  //             );
-  //             console.log(res);
-  //             chatBase[peerId.channelId.value] = res.title;
-  //           }
-  //           return chatBase[chatId];
-  //         })()
-
-  //         console.log(chat);
-  /*const chat = entity.title;
-          if (
-            chat === mainChat.Name &&
-            message.fromId.userId.value === clientInfo.id.value
-          ) {
-            for (let buyChat of buyChats) {
-              await client.sendMessage(buyChat, { message: message.message });
-            }
-          } else if (sellChats.includes(chat)) {
-            const answer = await checkMessageFromChat(
-              update.message.message,
-              clientInfo.id.value
-            );
-            if (answer) {
-              await client.sendMessage(fromUser.username, { message: answer });
-            }
-          }*/
-  //     }
-  //   }
-  // } catch (err) {
-  //   console.log("error in handler", err);
-  // }
 };

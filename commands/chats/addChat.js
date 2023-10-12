@@ -1,7 +1,7 @@
-const User = require("../db/users");
-const Chat = require("../db/chats");
-const startKeyboard = require("../models/keyboard/startkeyboard");
-const adminStartKeyboard = require("../models/keyboard/admin/adminStartKeyboard");
+const User = require("../../db/users");
+const Chat = require("../../db/chats");
+const startKeyboard = require("../../models/keyboard/startkeyboard");
+const adminStartKeyboard = require("../../models/keyboard/admin/adminStartKeyboard");
 
 module.exports = async function (msg, bot, option) {
   const userData = await User.findOne({

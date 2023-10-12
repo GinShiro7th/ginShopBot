@@ -1,9 +1,9 @@
 const fs = require("fs");
 const xlsx = require("xlsx");
-const product = require("../db/products");
+const product = require("../../db/products");
 const Sequelize = require("sequelize");
-const Keyword = require("../db/keywords");
-const MinusKeyword = require("../db/minusKeywords");
+const Keyword = require("../../db/keywords");
+const MinusKeyword = require("../../db/minusKeywords");
 
 module.exports = async function (msg, bot, userId, username) {
   const productList = await product.findAll({

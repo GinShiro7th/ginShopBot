@@ -1,11 +1,11 @@
 const fs = require("fs");
-const editProductKeyboard = require("../models/keyboard/editProductKeybord");
-const startKeyboard = require("../models/keyboard/startkeyboard");
-const adminStartKeyboard = require("../models/keyboard/admin/adminStartKeyboard");
-const Product = require("../db/products");
-const User = require("../db/users");
-const Keyword = require("../db/keywords");
-const MinusKeyword = require("../db/minusKeywords");
+const editProductKeyboard = require("../../models/keyboard/editProductKeybord");
+const startKeyboard = require("../../models/keyboard/startkeyboard");
+const adminStartKeyboard = require("../../models/keyboard/admin/adminStartKeyboard");
+const Product = require("../../db/products");
+const User = require("../../db/users");
+const Keyword = require("../../db/keywords");
+const MinusKeyword = require("../../db/minusKeywords");
 
 module.exports = async function (msg, bot, option, productID) {
   const user = await User.findOne({

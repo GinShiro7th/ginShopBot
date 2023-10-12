@@ -1,11 +1,11 @@
 const fs = require("fs");
-const product = require("../db/products");
-const User = require("../db/users");
-const Keyword = require("../db/keywords");
-const MinusKeyword = require("../db/minusKeywords");
+const product = require("../../db/products");
+const User = require("../../db/users");
+const Keyword = require("../../db/keywords");
+const MinusKeyword = require("../../db/minusKeywords");
 
 module.exports = async function (msg, bot, option) {
-  const products = require("../database/products.json");
+  const products = require("../../database/products.json");
   const listIndex = products.findIndex((item) => item.userId === msg.from.id);
 
   const user = await User.findOne({

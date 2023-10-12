@@ -7,6 +7,7 @@ const Keyword = require('./keywords');
 const minusKeywords = require('./minusKeywords');
 const IgnoreList = require('./ignoreList');
 const Session = require('./sessions');
+const BotState = require('./botState');
 
 module.exports = async function(){
   try {

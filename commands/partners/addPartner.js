@@ -1,7 +1,7 @@
-const users = require('../database/users.json');
-const usersToAdd = require('../database/usersToAdd.json');
+const users = require('../../database/users.json');
+const usersToAdd = require('../../database/usersToAdd.json');
 const fs = require('fs');
-const User = require('../db/users');
+const User = require('../../db/users');
 
 module.exports = async function(msg, bot, option){
 

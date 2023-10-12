@@ -1,5 +1,5 @@
-const Chat = require('../db/chats');
-const User = require('../db/users');
+const Chat = require('../../db/chats');
+const User = require('../../db/users');
 
 
 module.exports = async function(msg, bot, option, userId){
@@ -22,21 +22,20 @@ module.exports = async function(msg, bot, option, userId){
       const userChat = await Chat.findOne({
         where: {
           Name: mainChat,
-          FromUser: userId,
-          Type: 'buy'
+          Type: 'buy',
+          FromUser: msg.from.id,
         }
       });
       if (!userChat){
         return await bot.sendMessage(msg.chat.id, "Такого чата нет в списке ваших чатов. Пришлите именно тот чат, которые есть в вашем списке");
       };
-      
+      console.log('user chat', userChat.toJSON());
       await bot.sendMessage(msg.chat.id, "Главный чат успешно назначен");
 
       await Chat.update({
         isMain: false
       },{
         where: {
-          isMain: true,
           FromUser: msg.from.id
         }
       });
@@ -44,6 +43,7 @@ module.exports = async function(msg, bot, option, userId){
       await userChat.update({
         isMain: true
       });
+
       await user.update({
         Command: 'start'
       });

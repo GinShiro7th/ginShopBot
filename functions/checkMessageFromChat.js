@@ -1,6 +1,7 @@
 const Product = require("../db/products");
 const Keyword = require("../db/keywords");
 const MinusKeyword = require("../db/minusKeywords");
+const GlobalMinusKeywords = require('../db/globalMinusKeywords');
 const { Op } = require("sequelize");
 
 module.exports = async function (text, SellerId) {
@@ -23,11 +24,16 @@ module.exports = async function (text, SellerId) {
           UserID: SellerId,
         },
       });
+      const globalMinusKeywordsInfo = await GlobalMinusKeywords.findAll({
+        where: {
+          FromUser: SellerId
+        }
+      });
       const keywords = keywordsInfo.map((item) => item.Keyword.toLowerCase());
       const minusKeywords = minusKeywordsInfo.map((item) =>
-        item.Keyword.toLowerCase()
+        item.MinusKeywords.toLowerCase()
       );
-
+      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.Keywords.toLowerCase()));
       async function checkWordInclusion(message, searchPhrases) {
         const lowerCasedMsg = message.toLowerCase();
         const wordsOfMsg = lowerCasedMsg.split(/\s+/);
@@ -42,8 +48,11 @@ module.exports = async function (text, SellerId) {
 
       const isStopWords = await checkWordInclusion(text, minusKeywords);
       console.log("contain minus keywords", isStopWords);
+      
+      const isGlobalMinusKeywords = await checkWordInclusion(text, globalMinusKeywords);
+      console.log("contain global minus keywords", isGlobalMinusKeywords);
 
-      if (containsKeywords && !isStopWords) {
+      if (containsKeywords && !isStopWords && !isGlobalMinusKeywords) {
         const name = product.Name;
         const price = product.Price;
         return name + " - " + price;

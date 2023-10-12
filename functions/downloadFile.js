@@ -1,10 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
 
-// Замените 'YOUR_BOT_TOKEN' на токен вашего бота Telegram
 const BOT_TOKEN = '6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s';
-
-// Замените 'FILE_ID' на фактический file_id, который вы хотите загрузить
 
 async function downloadFile(FILE_ID, savePath) {
   try {
