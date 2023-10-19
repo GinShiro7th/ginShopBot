@@ -7,8 +7,9 @@ const MinusKeywordsTemplate = sequelize.define("MinusKeywordsTemplate", {
     allowNull: false
   },
   Keywords: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: DataTypes.STRING(999),
+    allowNull: false,
+
   },
   UserId: {
     type: DataTypes.BIGINT,

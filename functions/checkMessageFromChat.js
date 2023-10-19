@@ -33,15 +33,15 @@ module.exports = async function (text, SellerId) {
         }
       });
 
-      const keywords = keywordsInfo.map((item) => item.Keyword.replace(/"/g, '').toLowerCase());
-      const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').toLowerCase());
+      const keywords = keywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase());
+      const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase());
       console.log('keywords', keywords);
       console.log('with templates', minusKeywordsTemplates);
 
       const minusKeywords = await addKeywordsFromTemplate(minusKeywordsTemplates);
       console.log('without templates', minusKeywords);
 
-      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.toLowerCase()));
+      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase()));
       console.log('global minus kw', globalMinusKeywords);
 
       async function checkWordInclusion(message, searchPhrases) {

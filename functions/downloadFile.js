@@ -1,7 +1,9 @@
 const axios = require('axios');
 const fs = require('fs');
 
-const BOT_TOKEN = '6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s';
+//мой бот
+//const BOT_TOKEN = '6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s';
+const BOT_TOKEN = '6536697440:AAGhaIPg0sKovX-dWA4QhSmxc8_vtbgBZcQ';
 
 async function downloadFile(FILE_ID, savePath) {
   try {

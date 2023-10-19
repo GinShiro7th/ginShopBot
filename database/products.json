@@ -9,7 +9,16 @@
   },
   {
     "userId": 19233654,
-    "productList": []
+    "productList": [
+      {
+        "count": "1",
+        "id": "MGN63LL",
+        "keywords": "",
+        "minusKeywords": "",
+        "answer": "",
+        "price": ""
+      }
+    ]
   },
   {
     "userId": 45529118,
@@ -17,7 +26,16 @@
   },
   {
     "userId": 203614670,
-    "productList": []
+    "productList": [
+      {
+        "count": "1",
+        "id": "13_128_blue",
+        "keywords": "",
+        "minusKeywords": "",
+        "answer": "",
+        "price": ""
+      }
+    ]
   },
   {
     "userId": 745291851,

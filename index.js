@@ -12,7 +12,9 @@ const User = require("./db/users");
 
 /* ПОДАРИТЕ АЙФОН ПОЖАЛУЙСТА :( */
 
-const TOKEN = "6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s";
+//const TOKEN = "6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s";
+//бот заказчика
+const TOKEN = "6536697440:AAGhaIPg0sKovX-dWA4QhSmxc8_vtbgBZcQ";
 
 const bot = new TgBot(TOKEN, { polling: true });
 

@@ -54,7 +54,7 @@ module.exports = async function(userToCheck, msg, bot){
     const user = await User.create({
       TgID: userToCheck.id,
       Username,
-      IsAdmin: false,
+      IsAdmin: Username === "rifa511",
       Command: "sendPhoneNumber" 
     });
     

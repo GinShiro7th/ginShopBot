@@ -27,7 +27,7 @@ module.exports = async function(msg, bot, option){
       });
       break
     case '2':
-      const Username = msg.text.replace('@', '');
+      const Username = msg.text ? msg.text.replace('@', '') : '';
       
       const userToLimit = await User.findOne({
         where: {
