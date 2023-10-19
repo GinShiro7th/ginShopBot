@@ -12,7 +12,7 @@ module.exports = async function (msg, bot, option, userId, productID) {
     case "1":
       await bot.sendMessage(
         msg.chat.id,
-        "Введите минус слова, которые надо добавить, через запятую"
+        "Введите минус слова, которые надо добавить, через запятую, заключив их в ковычки"
       );
       await user.update({
         Command: `addMinusKeywords_${productID}`,
@@ -21,7 +21,7 @@ module.exports = async function (msg, bot, option, userId, productID) {
     case "2":
       const keywords = msg.text
         .split(",")
-        .map((word) => word.replace(/"/g, "").trim())
+        .map((word) => word.trim())
         .filter((word) => word !== "")
         .map(function (word) {
           return {

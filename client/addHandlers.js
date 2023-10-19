@@ -1,9 +1,12 @@
 const Chat = require("../db/chats");
-const BotState = require('../db/botState');
+const BotState = require("../db/botState");
 const { Api } = require("telegram");
-const checkMessageFromChat = require("../functions/checkMessageFromChat");
-const IgnoreList = require("../db/ignoreList");
 const { NewMessage } = require("telegram/events");
+
+const checkMessageFromChat = require("../functions/checkMessageFromChat");
+const sendAnswer = require("./sendAnswer");
+
+const IgnoreList = require("../db/ignoreList");
 
 const chatBase = {};
 
@@ -15,8 +18,8 @@ module.exports = async function (client) {
 
       const botState = await BotState.findOne({
         where: {
-          FromUser: clientInfo.id
-        }
+          FromUser: clientInfo.id,
+        },
       });
 
       if (!botState.IsActive) return;
@@ -32,11 +35,12 @@ module.exports = async function (client) {
           item.Name.replace("@", "")
         );
 
-        const chatId = update.peerId.chatId ? update.peerId.chatId : update.peerId.channelId;  
+        const chatId = update.peerId.chatId
+          ? update.peerId.chatId
+          : update.peerId.channelId;
 
-        const entity = await client.getEntity(
-          chatId
-        );
+        const entity = await client.getEntity(chatId);
+
         const chatTitle = entity.title;
         const chatUsername = entity.username;
 
@@ -70,7 +74,6 @@ module.exports = async function (client) {
               `
             );
 
-
             if (
               mainChat &&
               (chatTitle === mainChat || chatUsername === mainChat) &&
@@ -84,10 +87,28 @@ module.exports = async function (client) {
                   try {
                     await client.sendMessage(chat, { message: update.message });
                   } catch (err) {
-                    console.log(
-                      "err sending message from main chat:",
-                      err.message
-                    );
+                    if (err.message.includes("CHAT_WRITE_FORBIDDEN")) {
+                      try {
+                        const result = await client.invoke(
+                          new Api.channels.GetFullChannel({
+                            channel: chat,
+                          })
+                        );
+                        for (const channelChat of result.chats) {
+                          if (channelChat.username !== chat){
+                            try {
+                              await client.sendMessage(channelChat.id, {
+                                message: update.message,
+                              });
+                            } catch (err) {
+                              console.log("errorrrr aaaaaaaaaaa");
+                            }
+                          }
+                        }
+                      } catch (err) {
+                        console.log("error getting full channel");
+                      }
+                    }
                   }
                 }, i * 1000);
               }
@@ -105,10 +126,8 @@ module.exports = async function (client) {
                 if (answer) {
                   setTimeout(
                     async () =>
-                      await client.sendMessage(fromUser.username, {
-                        message: answer,
-                      }),
-                    2 * 60 * 1000
+                      await sendAnswer(client, fromUser.username, answer),
+                    1000
                   );
                 }
               }

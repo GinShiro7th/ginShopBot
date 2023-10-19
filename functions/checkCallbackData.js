@@ -10,6 +10,11 @@ const addGlobalMinusKeywords = require("../commands/addGlobalMinusKeywords");
 const delGlobalMinusKeywords = require("../commands/delGlobalMinusKeywords");
 const userTemplateToFile = require("../commands/templates/userTemplateToFile");
 const allTemplateToFile = require("../commands/templates/allTemplateToFile");
+const loadUserTemplateFromFile = require("../commands/templates/loadUserTemplateFromFile");
+const addTemplateMinusKw = require("../commands/templates/addTemplateMinusKw");
+const delTemplateMinusKw = require("../commands/templates/delTemplateMinusKw");
+const save = require("../commands/templates/save");
+const setPartnerTrial = require('../commands/partners/setPartnerTrial');
 
 module.exports = async function(query, bot){
   switch(query.data){
@@ -38,10 +43,13 @@ module.exports = async function(query, bot){
       return await allTemplateToFile(query.message, bot, query.from);
       break;
     case 'loadUserTemplateFromFile':
-      return
+      return await loadUserTemplateFromFile(query.message, bot, '1', query.from.id, 'load');
       break;
     case 'addUserTemplateFromFile':
-      return 
+      return await loadUserTemplateFromFile(query.message, bot, '1', query.from.id, 'add');
+      break;
+    case 'save':
+      return await save(query.message, bot, query.from.id);
       break;
     default:
       switch(query.data.split('_')[0]){ 
@@ -56,6 +64,15 @@ module.exports = async function(query, bot){
           break;
         case 'delMinusKeywords':
           return await delMinusKeywords(query.message, bot, '1', query.from.id, query.data.split('_')[1]);
+          break;
+        case 'addTemplateMinusKw':
+          return await addTemplateMinusKw(query.message, bot, '1', query.from.id, query.data.split('_')[1])
+          break;
+        case 'delTemplateMinusKw':
+          return await delTemplateMinusKw(query.message, bot, '1', query.from.id, query.data.split('_')[1]);
+          break;
+        case "trial":
+          return await setPartnerTrial(query.message, bot, query.from.id, query.data.split('_')[1], query.data.split('_')[2]);
           break;
       }
   }

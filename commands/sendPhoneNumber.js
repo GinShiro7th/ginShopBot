@@ -69,7 +69,7 @@ module.exports = async function (msg, bot, option, userToCheck) {
         resize_keyboard: true,
       };
 
-      await bot.sendMessage(msg.chat.id, "Введите код, который пришел вам", {
+      await bot.sendMessage(msg.chat.id, "Введите код, который пришел вам, используя кнопки", {
         reply_markup: JSON.stringify(replyKeyboard),
       });
 

@@ -10,14 +10,14 @@ module.exports = async function(msg, bot, option, templateTitle){
 
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "Напишите название шаблоны, который хотите добавить");
+      await bot.sendMessage(msg.chat.id, "Введите название шаблоны, который хотите добавить");
       await user.update({
         Command: "addTemplateTitle"
       });
       break;
     case '2':
       const title = msg.text;
-      await bot.sendMessage(msg.chat.id, "Перечислите минус слова, которые хотите добавить в шаблон");
+      await bot.sendMessage(msg.chat.id, "Перечислите минус слова, которые хотите добавить в шаблон, заключив их в ковычки");
       await user.update({
         Command: "addTemplateKeywords_"+title
       });

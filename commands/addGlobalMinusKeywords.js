@@ -11,13 +11,13 @@ module.exports = async function(msg, bot, option, fromId){
 
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "🔎Пришлите минус слова, которые хотите добавить в глобальные");
+      await bot.sendMessage(msg.chat.id, "🔎Пришлите минус слова, которые хотите добавить в глобальные, заключив каждое слово в ковычки");
       await user.update({
         Command: "addGlobalMinusKeywords"
       });
       break;
     case '2':
-      const globalMinusKeywords = msg.text.split(',').map(word => word.trim().replace(/"/g, ''));
+      const globalMinusKeywords = msg.text.split(',').map(word => word.trim());
       console.log(globalMinusKeywords);
       for (let keyword of globalMinusKeywords){
         await GlobalMinusKeywords.create({

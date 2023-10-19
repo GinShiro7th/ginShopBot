@@ -31,38 +31,84 @@ module.exports = async function (msg, bot, option) {
           resize_keyboard: true,
         },
       });
+
       await userData.update({
         Command: msg.text,
       });
       break;
     case "3":
-      await Chat.update(
-        {
-          Type: "buy",
-        },
-        {
+      const chatCount = await Chat.count({
+        where: {
+          Type: 'buy',
+          Name: userData.Command,
+          FromUser: userData.TgID,
+          IsMain: false
+        }
+      });
+      if (chatCount < 1){
+        await Chat.update(
+          {
+            Type: "buy",
+          },
+          {
+            where: {
+              Name: userData.Command,
+              FromUser: userData.TgID,
+            },
+          }
+        );
+        await bot.sendMessage(
+          msg.chat.id,
+          "✅Чат для покупки успешно добавлен",
+          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+        );
+      } else {
+        await Chat.destroy({
           where: {
+            Type: 'sell',
             Name: userData.Command,
             FromUser: userData.TgID,
-          },
-        }
-      );
-      await bot.sendMessage(
-        msg.chat.id,
-        "✅Чат для покупки успешно добавлен",
-        userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
-      );
+            IsMain: false
+          }
+        });
+        await bot.sendMessage(
+          msg.chat.id,
+          "⭕️Такой чат уже есть в списке чатов для покупки",
+          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+        );
+      }
       await userData.update({
         Command: "start",
       });
       break;
     case "4":
-      await bot.sendMessage(
-        msg.chat.id,
-        "✅Чат для продажи успешно добавлен",
-        userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
-      );
-
+      const chats = await Chat.findAll({
+        where: {
+          Type: 'sell',
+          Name: userData.Command,
+          FromUser: userData.TgID
+        }
+      });
+      if (chats.length < 2){
+        await bot.sendMessage(
+          msg.chat.id,
+          "✅Чат для продажи успешно добавлен",
+          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+        );
+      } else {
+        await Chat.destroy({
+          where: {
+            Type: 'sell',
+            Name: userData.Command,
+            FromUser: userData.TgID
+          }
+        });
+        await bot.sendMessage(
+          msg.chat.id,
+          "⭕️Такой чат уже есть в списке чатов для продажи",
+          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+        );
+      }
       await userData.update({
         Command: "start",
       });

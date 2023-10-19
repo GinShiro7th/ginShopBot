@@ -15,20 +15,20 @@ module.exports = async function(msg, bot){
 
   for (let i=0; i<partners.length; i++){
     if (i % 30 || i === 0){
-      dashBoard += `\n${i+1} - @${partners[i].Name}`
+      dashBoard += `\n${i+1} - @${partners[i].Username}`
     } else {
       messages.push(dashBoard);
       dashBoard = '';
-      dashBoard += `\n${i+1} - @${partners[i].Name}`  
+      dashBoard += `\n${i+1} - @${partners[i].Username}`  
     }
   };
   for (let i=0; i < usersToAdd.length; i++){
     if ((i + partners.length) % 30 || (i + partners.length) === 0)
-      dashBoard += `\n${i + 1 + partners.length} - @${usersToAdd[i]}`;
+      dashBoard += `\n${i + 1 + partners.length} - @${usersToAdd[i].partner}`;
     else {
       messages.push(dashBoard);
       dashBoard = '';
-      dashBoard += `\n${i + 1 + partners.length} - @${usersToAdd[i]}`;
+      dashBoard += `\n${i + 1 + partners.length} - @${usersToAdd[i].partner}`;
     }
   }
   messages.push(dashBoard);

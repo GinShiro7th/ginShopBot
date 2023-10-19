@@ -1,4 +1,3 @@
-const fs = require("fs");
 const editProductKeyboard = require("../../models/keyboard/editProductKeybord");
 const startKeyboard = require("../../models/keyboard/startkeyboard");
 const adminStartKeyboard = require("../../models/keyboard/admin/adminStartKeyboard");
@@ -21,7 +20,6 @@ module.exports = async function (msg, bot, option, productID) {
 
   switch (option) {
     case "0":
-      // Предполагается, что вы хотите использовать "editProductNum" в других случаях, поэтому не убираем его отсюда
       message =
         "Отправьте айди того товара в списке, который вы хотите отредактировать";
       await user.update({
@@ -87,7 +85,7 @@ module.exports = async function (msg, bot, option, productID) {
       if (msg.text !== "Оставить как есть") {
         const keywords = msg.text
           .split(",")
-          .map((item) => item.replace(/"/g, "").trim())
+          .map((item) => item.trim())
           .filter((item) => item !== "")
           .map(function (item) {
             return {
@@ -132,13 +130,13 @@ module.exports = async function (msg, bot, option, productID) {
       message =
         "Текущие минус слова:\n" +
         list +
-        "\n\nВведите новые минус слова, через запятую";
+        "\n\nВведите новые минус слова, через запятую, если это обычное минус слово - заключите его в ковычки, если это шаблон - то не заключайте его в ковычки";
       break;
     case "4":
       if (msg.text !== "Оставить как есть") {
         const minusKeywords = msg.text
           .split(",")
-          .map((item) => item.replace(/"/g, "").trim())
+          .map((item) => item.trim())
           .filter((item) => item !== "")
           .map(function (item) {
             return {

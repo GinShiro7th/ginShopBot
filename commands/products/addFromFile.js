@@ -7,6 +7,7 @@ const Keyword = require('../../db/keywords');
 const MinusKeyword = require('../../db/minusKeywords');
 
 const downloadFile = require("../../functions/downloadFile");
+const Trial = require("../../db/trial");
 
 const expectedColumns = [
   "Наличие",
@@ -28,7 +29,8 @@ module.exports = async function (msg, bot, option, userId) {
     case "1":
       await bot.sendMessage(
         msg.chat.id,
-        "Пришлите xlsx файл, из которого надо добавить товары. В файле должны быть именно такие столбцы:\n" + expectedColumns.join(', ')
+        "Пришлите xlsx файл, из которого надо добавить товары. В файле должны быть именно такие столбцы:\n" + expectedColumns.join(', ') 
+        + ". Если у вас в столбце 'Минус слова' есть шаблоны, то их заключать в ковычки не нужно, а остальные минус слова нужно заключать в ковычки"
       );
       await user.update({ Command: "getFileForAdd" });
       break;
@@ -85,8 +87,15 @@ module.exports = async function (msg, bot, option, userId) {
             );
           }
 
-          for (const addedProduct of jsonData){
+          const trial = await Trial.findOne({
+            where: {
+              UserId: userId
+            }
+          });
 
+          const maxProductCount = trial ? trial.Type === '1' ? 1 : trial.Type === "2" ? 10 : trial.Type == '3' ? 100 : 999999999 : 999999999;
+
+          for (const addedProduct of jsonData){
             const prodInDb = await Product.findOne({
               where: {
                 productID: addedProduct['ID'],
@@ -94,7 +103,18 @@ module.exports = async function (msg, bot, option, userId) {
               }
             });
 
+            const productCount = await Product.count({
+              where: {
+                SellerId: userId
+              }
+            });
+
+            if (productCount >= maxProductCount){
+              break;
+            }
+
             if (!prodInDb){
+              
               const newProduct = await Product.create({
                 isAvaible: addedProduct['Наличие'],
                 productID: addedProduct['ID'],
@@ -105,7 +125,7 @@ module.exports = async function (msg, bot, option, userId) {
 
               const keywords = addedProduct['Ключевые слова']
                 .split(',')
-                .map(word => word.replace(/"/g, '').trim())
+                .map(word => word.trim())
                 .filter(word => word !== '')
                 .map(function(item){
                   return {
@@ -117,7 +137,7 @@ module.exports = async function (msg, bot, option, userId) {
 
               const minusKeywords = addedProduct['Минус слова']
                 .split(',')
-                .map(word => word.replace(/"/g, '').trim())
+                .map(word => word.trim())
                 .filter(word => word !== '')
                 .map(function(item){
                   return {
@@ -138,8 +158,6 @@ module.exports = async function (msg, bot, option, userId) {
       } catch (err) {
         console.error("Ошибка при чтении файла:", err.message);
       }
-
-      // Получение данных из первого листа (worksheet) в файле
 
       await bot.sendMessage(msg.chat.id, "Товары из файла успешно добавлены");
       await user.update({ Command: "start" });

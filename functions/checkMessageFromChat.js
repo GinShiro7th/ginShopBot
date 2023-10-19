@@ -3,6 +3,7 @@ const Keyword = require("../db/keywords");
 const MinusKeyword = require("../db/minusKeywords");
 const GlobalMinusKeywords = require('../db/globalMinusKeywords');
 const { Op } = require("sequelize");
+const addKeywordsFromTemplate = require("./addKeywordsFromTemplate");
 
 module.exports = async function (text, SellerId) {
   try {
@@ -18,28 +19,35 @@ module.exports = async function (text, SellerId) {
           UserID: SellerId,
         },
       });
+
       const minusKeywordsInfo = await MinusKeyword.findAll({
         where: {
           ProductID: product.productID,
           UserID: SellerId,
         },
       });
+
       const globalMinusKeywordsInfo = await GlobalMinusKeywords.findAll({
         where: {
           FromUser: SellerId
         }
       });
-      const keywords = keywordsInfo.map((item) => item.Keyword.toLowerCase());
-      const minusKeywords = minusKeywordsInfo.map((item) =>
-        item.MinusKeywords.toLowerCase()
-      );
-      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.Keywords.toLowerCase()));
+
+      const keywords = keywordsInfo.map((item) => item.Keyword.replace(/"/g, '').toLowerCase());
+      const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').toLowerCase());
+      console.log('keywords', keywords);
+      console.log('with templates', minusKeywordsTemplates);
+
+      const minusKeywords = await addKeywordsFromTemplate(minusKeywordsTemplates);
+      console.log('without templates', minusKeywords);
+
+      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.toLowerCase()));
+      console.log('global minus kw', globalMinusKeywords);
+
       async function checkWordInclusion(message, searchPhrases) {
         const lowerCasedMsg = message.toLowerCase();
-        const wordsOfMsg = lowerCasedMsg.split(/\s+/);
         return searchPhrases.some((pattern) => {
-          const searchWords = pattern.split(' ');
-          return searchWords.every(word => wordsOfMsg.includes(word));
+          return lowerCasedMsg.includes(pattern);
         })
       }
 

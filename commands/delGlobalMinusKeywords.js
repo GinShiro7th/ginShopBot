@@ -16,7 +16,7 @@ module.exports = async function(msg, bot, option, fromId){
       });
       break;
     case '2':
-      const globalMinusKeywords = msg.text.split(',').map(word => word.trim().replace(/"/g, ''));  
+      const globalMinusKeywords = msg.text.split(',').map(word => word.trim());  
       console.log(globalMinusKeywords);
       for (let keyword of globalMinusKeywords){
         await GlobalMinusKeywords.destroy({

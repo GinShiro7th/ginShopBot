@@ -25,8 +25,8 @@ module.exports = async function(msg, bot, fromUser){
   xlsx.utils.book_append_sheet(workbook, worksheet, "Шаблоны");
 
   const columnWidths = [
-    { wpx: 50 },
-    { wpx: 200 },
+    { wpx: 80 },
+    { wpx: 400 },
   ];
 
   worksheet["!cols"] = columnWidths;

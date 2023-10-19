@@ -23,7 +23,7 @@ module.exports = async function (msg, bot, option, userId, productID) {
     case "2":
       const keywords = msg.text
         .split(",")
-        .map((word) => word.replace(/"/g, "").trim())
+        .map((word) => word.trim())
         .filter((word) => word !== "");
       await MinusKeyword.destroy({
         where: {

@@ -1,5 +1,6 @@
 const User = require('../../db/users');
 const Chat = require('../../db/chats');
+const Trial = require('../../db/trial');
 
 module.exports = async function(msg, bot, option){
 
@@ -8,6 +9,12 @@ module.exports = async function(msg, bot, option){
       TgID: msg.from.id
     }
   });
+
+  const trial = await Trial.findOne({
+    where: {
+      UserId: msg.from.id
+    }
+  })
 
   switch (option) {
     case "1":
@@ -23,17 +30,22 @@ module.exports = async function(msg, bot, option){
       
       const chat = await Chat.findOne({
         where: {
-          Name: name
+          Name: name,
+          FromUser: msg.from.id
         }
       })
 
       if (chat){
-        await bot.sendMessage(msg.chat.id, `✅Чат ${name} успешно удален`, {
-          disable_web_page_preview: true
-        });
-        await chat.destroy();
+        if (name === "СУЕТОЛОГ" && trial.Type >= 1 && trial.Type <= 3){
+          await bot.sendMessage(msg.chat.id, "❌Вы не можете удалить этот чат, так как он назначен у вас главным");
+        } else {
+          await bot.sendMessage(msg.chat.id, `✅Чат ${name} успешно удален`, {
+            disable_web_page_preview: true
+          });
+          await chat.destroy();
+        }
       } else {
-        return await bot.sendMessage(msg.chat.id, "⭕️Данный чат не найден cреди ваших чатов");
+        await bot.sendMessage(msg.chat.id, "⭕️Данный чат не найден cреди ваших чатов");
       }
 
       await user.update({

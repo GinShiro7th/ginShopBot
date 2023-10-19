@@ -47,19 +47,22 @@ module.exports = async function (msg, bot, userId, username) {
   // Добавление листа в книгу
   xlsx.utils.book_append_sheet(workbook, worksheet, "Товар");
 
-  const columnWidths = [
-    { wpx: 50 },
-    { wpx: 50 },
-    { wpx: 80 },
-    { wpx: 70 },
-    { wpx: 200 },
-    { wpx: 200 },
-  ];
+  const fixedWidthColumns = {
+    "Наличие": { wpx: 80 }, // Установите фиксированную ширину в пикселях
+    "ID": { wpx: 80 }, // Установите фиксированную ширину в пикселях
+  };
 
-  worksheet["!cols"] = columnWidths;
+  const arrayOfArray = productData.map((row) => Object.values(row));
+  
+  const autoWidthColumns = arrayOfArray[0].map((a, i) => ({
+    wch: Math.max(...arrayOfArray.map(a2 => a2[i] ? a2[i].toString().length : 0)),
+  }));
 
-  const date = Date.now();
-  // Сохранение xlsx-файла
+  worksheet["!cols"] = autoWidthColumns.map((col, i) => {
+    const columnName = Object.keys(fixedWidthColumns)[i];
+    return fixedWidthColumns[columnName] || col;
+  });
+
   xlsx.writeFile(workbook, `files/products_${username}.xlsx`);
 
   await bot.sendDocument(msg.chat.id, `files/products_${username}.xlsx`);

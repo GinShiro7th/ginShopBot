@@ -5,6 +5,10 @@ const Chat = require('../../db/chats');
 const Keyword = require('../../db/keywords');
 const MinusKeyword = require('../../db/minusKeywords');
 const Product = require('../../db/products');
+const BotState = require('../../db/botState');
+const GlobalMinusKeywords = require('../../db/globalMinusKeywords');
+const IgnoreList = require('../../db/ignoreList');
+const Trial = require('../../db/trial');
 
 module.exports = async function(msg, bot, option){
   const usersToAdd = require('../../database/usersToAdd.json');
@@ -17,13 +21,13 @@ module.exports = async function(msg, bot, option){
 
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "#️⃣Пришлите юзернейм (без @ или ссылки) того партнера из списка, которому надо ограничить доступ");
+      await bot.sendMessage(msg.chat.id, "#️⃣Пришлите юзернейм того партнера из списка, которому надо ограничить доступ");
       await user.update({
         Command: "limitPartner"
       });
       break
     case '2':
-      const Username = msg.text;
+      const Username = msg.text.replace('@', '');
       
       const userToLimit = await User.findOne({
         where: {
@@ -31,12 +35,12 @@ module.exports = async function(msg, bot, option){
         }
       })
       
-      const userIndex = usersToAdd.findIndex(item => item === Username);
+      const userIndex = usersToAdd.findIndex(item => item.partner === Username);
 
       if(userToLimit){
         await Chat.destroy({
           where: {
-            FromId: userToLimit.TgID
+            FromUser: userToLimit.TgID
           }
         });
         await Keyword.destroy({
@@ -54,6 +58,15 @@ module.exports = async function(msg, bot, option){
             SellerId: userToLimit.TgID
           }
         });
+        await BotState.destroy({
+          where: {
+            FromUser: userToLimit.TgID
+          }
+        });
+        await GlobalMinusKeywords.destroy({ where: {FromUser: userToLimit.TgID}});
+        await IgnoreList.destroy({ where: { FromSeller: userToLimit.TgID}});
+        await Trial.destroy({ where: { UserId : userToLimit.TgID}});
+        
         await userToLimit.destroy();
       } else if (userIndex !== -1){
         usersToAdd.splice(userIndex, 1);

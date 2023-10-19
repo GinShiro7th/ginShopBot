@@ -7,7 +7,7 @@ const sequelize = new Sequelize('admin_shop', 'admin_shop', 'ekiL4aEG9t', {
   define: {
     charset: 'utf8mb4',
     collate: "utf8mb4_bin"
-  }
+  } 
 });
 
 module.exports = sequelize;

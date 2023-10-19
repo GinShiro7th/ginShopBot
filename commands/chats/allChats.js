@@ -1,7 +1,7 @@
 const fs = require('fs');
 const User = require('../../db/users');
 const Chat = require('../../db/chats');
-
+const Trial = require('../../db/trial');
 
 module.exports = async function(msg, bot){
   
@@ -10,6 +10,12 @@ module.exports = async function(msg, bot){
       TgID: msg.from.id
     }
   });
+
+  const trial = await Trial.findOne({
+    where: {
+      UserId: msg.from.id
+    }
+  })
 
   const chats = await Chat.findAll({
     where: {
@@ -57,10 +63,16 @@ module.exports = async function(msg, bot){
       ]
     }
 
-    await bot.sendMessage(msg.chat.id, message, {
-      reply_markup: JSON.stringify(kb),
-      disable_web_page_preview: true
-    });
+    if (!trial || trial.Type === '4'){
+      await bot.sendMessage(msg.chat.id, message, {
+        reply_markup: JSON.stringify(kb),
+        disable_web_page_preview: true
+      });
+    } else {
+      await bot.sendMessage(msg.chat.id, message, {
+        disable_web_page_preview: true
+      });
+    }
 
   } else {
     await bot.sendMessage(msg.chat.id, "⭕️Вы еще не добавили ни одного чата");

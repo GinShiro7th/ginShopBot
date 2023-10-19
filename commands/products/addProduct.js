@@ -3,6 +3,7 @@ const product = require("../../db/products");
 const User = require("../../db/users");
 const Keyword = require("../../db/keywords");
 const MinusKeyword = require("../../db/minusKeywords");
+const Trial = require("../../db/trial");
 
 module.exports = async function (msg, bot, option) {
   const products = require("../../database/products.json");
@@ -13,6 +14,38 @@ module.exports = async function (msg, bot, option) {
       TgID: msg.from.id,
     },
   });
+
+  const trial = await Trial.findOne({
+    where: {
+      UserId: msg.from.id
+    }
+  });
+
+  const productCount = await product.count({
+    where: {
+      SellerId: msg.from.id
+    }
+  });
+
+  if (trial){
+    switch (trial.Type){
+      case '1':
+        if (productCount >= 1){
+          return await bot.sendMessage(msg.chat.id, "⭕️Вы больше не можете добавлять товары, так как ваш тариф позволяет добавить вам только один товар, вы можете только заменить уже имеющийся, редактировав его");
+        }
+        break;
+      case '2':
+        if (productCount >= 10){
+          return await bot.sendMessage(msg.chat.id, "⭕️Вы больше не можете добавлять товары, так как ваш тариф позволяет добавить вам только 10 товаров, вы можете только заменить уже имеющиеся, редактировав их");
+        }
+        break;
+      case '3':
+        if (productCount >= 100){
+          return await bot.sendMessage(msg.chat.id, "⭕️Вы больше не можете добавлять товары, так как ваш тариф позволяет добавить вам только 100 товаров, вы можете только заменить уже имеющиеся, редактировав их");
+        }
+        break;
+    }
+  }
 
   switch (option) {
     case "-1":
@@ -56,7 +89,7 @@ module.exports = async function (msg, bot, option) {
       });
       await bot.sendMessage(
         msg.chat.id,
-        "Введите ключевые слова через запятую"
+        'Введите ключевые слова через запятую, заключив их в такие "" кавычки'
       );
       break;
     case "2":
@@ -67,7 +100,7 @@ module.exports = async function (msg, bot, option) {
       await user.update({
         Command: "addMinusKeywords",
       });
-      await bot.sendMessage(msg.chat.id, "Введите минус слова через запятую");
+      await bot.sendMessage(msg.chat.id, 'Введите минус слова через запятую, заключив их в такие "" кавычки, если в добавок к ним хотите ввести шаблон минус слов, то его заключать в кавычки не нужно');
       break;
     case "3":
       const minusKeywords = msg.text;
@@ -124,7 +157,7 @@ module.exports = async function (msg, bot, option) {
 
           const keywords = addedProduct.keywords
             .split(",")
-            .map((word) => word.replace(/"/g, '').trim())
+            .map((word) => word.trim())
             .filter((word) => word !== "")
             .map(function(item){
               return {
@@ -136,7 +169,7 @@ module.exports = async function (msg, bot, option) {
 
           const minusKeywords = addedProduct.minusKeywords
             .split(",")
-            .map((word) => word.replace(/"/g, '').trim())
+            .map((word) => word.trim())
             .filter((word) => word !== "")
             .map(function(item){
               return {

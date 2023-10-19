@@ -27,6 +27,10 @@ const delGlobalMinusKeywords = require("../commands/delGlobalMinusKeywords");
 const switchBotState = require("../commands/switchBotState");
 const addMinusKeywordsTemplate = require("../commands/templates/addMinusKeywordsTemplate");
 const allTemplates = require("../commands/templates/allTemplates");
+const loadUserTemplateFromFile = require("../commands/templates/loadUserTemplateFromFile");
+const editTemplate = require('../commands/templates/editTemplate');
+const addTemplateMinusKw = require("../commands/templates/addTemplateMinusKw");
+const delTemplateMinusKw = require("../commands/templates/delTemplateMinusKw");
 
 module.exports = async function (msg, bot) {
   const user = await checkUser(msg.from, msg, bot);
@@ -77,7 +81,7 @@ module.exports = async function (msg, bot) {
     } else if (msg.text === "📋Все шаблоны"){
       return await allTemplates(msg, bot);
     } else if (msg.text === "🔧Редактировать шаблон"){
-      return 
+      return await editTemplate(msg, bot, '1', null);
     }
     switch (user.Command) {
       case "addPartner":
@@ -137,6 +141,15 @@ module.exports = async function (msg, bot) {
       case 'addTemplateTitle':
         return await addMinusKeywordsTemplate(msg, bot, '2', null);
         break;
+      case 'getTemplateFileForUpdate':
+        return await loadUserTemplateFromFile(msg, bot, '2', msg.from.id, 'load');
+        break;
+      case 'getTemplateFileForAdd':
+        return await loadUserTemplateFromFile(msg, bot, '2', msg.from.id, 'add');
+        break;
+      case 'editTemplate':
+        return await editTemplate(msg, bot, '2', null);
+        break;
       default:
         switch (user.Command.split("_")[0]) {
           case "editProductCount":
@@ -171,6 +184,15 @@ module.exports = async function (msg, bot) {
             break;
           case 'addTemplateKeywords':
             return await addMinusKeywordsTemplate(msg, bot, '3', user.Command.split('_')[1]);
+            break;
+          case 'editTemplate':
+            return await editTemplate(msg, bot, '3', user.Command.split('_')[1]);
+            break;
+          case 'addTemplateMinusKeywords':
+            return await addTemplateMinusKw(msg, bot, '2', msg.from.id, user.Command.split('_')[1]);
+            break;
+          case 'delTemplateMinusKeywords':
+            return await delTemplateMinusKw(msg, bot, '2', msg.from.id, user.Command.split('_')[1]);
             break;
         }
     }

@@ -5,6 +5,7 @@ const User = require("../../db/users");
 const Product = require("../../db/products");
 const Keyword = require("../../db/keywords");
 const MinusKeyword = require("../../db/minusKeywords");
+const Trial = require('../../db/trial');
 
 const downloadFile = require("../../functions/downloadFile");
 
@@ -29,7 +30,7 @@ module.exports = async function (msg, bot, option, userId) {
       await bot.sendMessage(
         msg.chat.id,
         "Пришлите xlsx файл, из которого надо загрузить товары. Все ваши товары (если они есть) в базе данных будут заменены товарами из файла. Это можно использовать для массового редактирования (сначала загрузить список товаров из базы в файл, затем редактировать этот файл, нажать на кнопку 'загрузить из файла' и отправить редактированный файл).  В файле должны быть именно такие столбцы:\n" +
-          expectedColumns.join(", ")
+          expectedColumns.join(", ") + ". Если у вас в столбце 'Минус слова' есть шаблоны, то их заключать в кавычки не нужно, а остальные минус слова нужно заключать в кавычки"
       );
       await user.update({ Command: "getFileForUpdate" });
       break;
@@ -104,41 +105,69 @@ module.exports = async function (msg, bot, option, userId) {
             },
           });
 
+          const trial = await Trial.findOne({
+            where: {
+              UserId: userId
+            }
+          });
+
+          const maxProductCount = trial ? trial.Type === '1' ? 1 : trial.Type === '2' ? 10 : trial.Type === '3' ? 100 : 999999999 : 999999999;
+
           for (const addedProduct of jsonData) {
-            const newProduct = await Product.create({
-              isAvaible: addedProduct["Наличие"],
-              productID: addedProduct["ID"],
-              Name: addedProduct["Наименование"],
-              Price: addedProduct["Цена"],
-              SellerId: userId,
+            
+            const productCount = await Product.count({
+              where: {
+                SellerId: userId
+              }
             });
 
-            const keywords = addedProduct["Ключевые слова"]
-              .split(",")
-              .map((word) => word.replace(/"/g, "").trim())
-              .filter((word) => word !== "")
-              .map(function (item) {
-                return {
-                  Keyword: item,
-                  ProductID: addedProduct["ID"],
-                  UserID: userId,
-                };
+            if (productCount >= maxProductCount){
+              break;
+            }
+            
+            const exist = await Product.findOne({
+              where: {
+                productID: addedProduct["ID"],
+                SellerId: userId
+              }
+            });
+
+            if (!exist){
+              const newProduct = await Product.create({
+                isAvaible: addedProduct["Наличие"],
+                productID: addedProduct["ID"],
+                Name: addedProduct["Наименование"],
+                Price: addedProduct["Цена"],
+                SellerId: userId,
               });
 
-            const minusKeywords = addedProduct["Минус слова"]
-              .split(",")
-              .map((word) => word.replace(/"/g, "").trim())
-              .filter((word) => word !== "")
-              .map(function (item) {
-                return {
-                  Keyword: item,
-                  ProductID: addedProduct["ID"],
-                  UserID: userId,
-                };
-              });
+              const keywords = addedProduct["Ключевые слова"]
+                .split(",")
+                .map((word) => word.trim())
+                .filter((word) => word !== "")
+                .map(function (item) {
+                  return {
+                    Keyword: item,
+                    ProductID: addedProduct["ID"],
+                    UserID: userId,
+                  };
+                });
 
-            await Keyword.bulkCreate(keywords);
-            await MinusKeyword.bulkCreate(minusKeywords);
+              const minusKeywords = addedProduct["Минус слова"]
+                .split(",")
+                .map((word) => word.trim())
+                .filter((word) => word !== "")
+                .map(function (item) {
+                  return {
+                    Keyword: item,
+                    ProductID: addedProduct["ID"],
+                    UserID: userId,
+                  };
+                });
+
+              await Keyword.bulkCreate(keywords);
+              await MinusKeyword.bulkCreate(minusKeywords);
+            }
           }
         }
 

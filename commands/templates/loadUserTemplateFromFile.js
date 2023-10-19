@@ -11,7 +11,7 @@ const expectedColumns = [
   "Минус слова",
 ];
 
-module.exports = async function (msg, bot, option, userId) {
+module.exports = async function (msg, bot, option, userId, type) {
   const user = await User.findOne({
     where: {
       TgID: userId,
@@ -20,12 +20,21 @@ module.exports = async function (msg, bot, option, userId) {
 
   switch (option) {
     case "1":
-      await bot.sendMessage(
-        msg.chat.id,
-        "Пришлите xlsx файл, из которого надо загрузить шаблоны. Все ваши шаблоны (если они есть) в базе данных будут заменены шаблонами из файла. Это можно использовать для массового редактирования (сначала загрузить список шаблонов из базы в файл, затем редактировать этот файл, нажать на кнопку 'загрузить из файла' и отправить редактированный файл).  В файле должны быть именно такие столбцы:\n" +
-          expectedColumns.join(", ")
-      );
-      await user.update({ Command: "getTemplateFileForUpdate" });
+      if (type === 'load'){
+        await bot.sendMessage(
+          msg.chat.id,
+          "Пришлите xlsx файл, из которого надо загрузить шаблоны. Все ваши шаблоны (если они есть) в базе данных будут заменены шаблонами из файла. Это можно использовать для массового редактирования (сначала загрузить список шаблонов из базы в файл, затем редактировать этот файл, нажать на кнопку 'загрузить из файла' и отправить редактированный файл).  В файле должны быть именно такие столбцы:\n" +
+            expectedColumns.join(", ") + ". Минус слова нужно заключать в ковычки"
+        );
+        await user.update({ Command: "getTemplateFileForUpdate" });
+      } else if (type === 'add'){
+        await bot.sendMessage(
+          msg.chat.id,
+          "Пришлите xlsx файл, из которого надо добавить шаблоны. В файле должны быть именно такие столбцы:\n" +
+            expectedColumns.join(", ")
+        );
+        await user.update({ Command: "getTemplateFileForAdd" });
+      }
       break;
     case "2":
       if (!msg.document) {
@@ -80,19 +89,31 @@ module.exports = async function (msg, bot, option, userId) {
             );
           }
 
-          await MinusKeywordsTemplate.destroy({
-            where: {
-              UserId: userId
-            }
-          });
+          if (type === 'load'){
+            await MinusKeywordsTemplate.destroy({
+              where: {
+                UserId: userId
+              }
+            });
+          };
 
           for (const addedTemplate of jsonData) {
             try {
-              const newTemplate = await MinusKeywordsTemplate.create({
-                Template: addedTemplate["Шаблон"],
-                Keywords: addedTemplate["Минус слова"],
-                UserId: userId,
+              const tempInDb = await MinusKeywordsTemplate.findOne({
+                where: {
+                  Template: addedTemplate["Шаблон"],
+                  Keywords: addedTemplate["Минус слова"],
+                  UserId: userId,
+                }
               });
+
+              if (!tempInDb){
+                const newTemplate = await MinusKeywordsTemplate.create({
+                  Template: addedTemplate["Шаблон"],
+                  Keywords: addedTemplate["Минус слова"],
+                  UserId: userId,
+                });
+              }
             } catch (err) {
               console.log('error adding template from file to db:', err.message);
             }
