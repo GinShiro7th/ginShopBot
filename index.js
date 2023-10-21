@@ -8,10 +8,10 @@ const connectClientFromDB = require("./client/connectClientFromDB");
 
 const User = require("./db/users");
 
-//test bot token
 
 /* ПОДАРИТЕ АЙФОН ПОЖАЛУЙСТА :( */
 
+//test bot token
 //const TOKEN = "6543382390:AAHu3SxUI0kIWSKD6B4dzuA6gVppwVEEL7s";
 //бот заказчика
 const TOKEN = "6536697440:AAGhaIPg0sKovX-dWA4QhSmxc8_vtbgBZcQ";
@@ -21,6 +21,7 @@ const bot = new TgBot(TOKEN, { polling: true });
 console.log("bot started");
 
 bot.on("message", async (msg) => {
+  if (msg.chat.id < 0) return;
   await checkCommand(msg, bot);
 });
 
