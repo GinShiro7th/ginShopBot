@@ -12,7 +12,7 @@ module.exports = async function(msg, bot, option, userId){
   
   switch (option){
     case '1':
-      await bot.sendMessage(msg.chat.id, "Пришлите название чата для покупки, который нужно сделать главным. Из него будет идти копирование ваших сообщений в другие чаты");
+      await bot.sendMessage(msg.chat.id, "✏️Пришлите название чата для покупки, который нужно сделать главным. Из него будет идти копирование ваших сообщений в другие чаты");
       await user.update({
         Command: 'setMainChat'
       }); 
@@ -27,10 +27,10 @@ module.exports = async function(msg, bot, option, userId){
         }
       });
       if (!userChat){
-        return await bot.sendMessage(msg.chat.id, "Такого чата нет в списке ваших чатов. Пришлите именно тот чат, которые есть в вашем списке");
+        return await bot.sendMessage(msg.chat.id, "⭕️Такого чата нет в списке ваших чатов. Пришлите именно тот чат, которые есть в вашем списке");
       };
       console.log('user chat', userChat.toJSON());
-      await bot.sendMessage(msg.chat.id, "Главный чат успешно назначен");
+      await bot.sendMessage(msg.chat.id, "✅Главный чат успешно назначен");
 
       await Chat.update({
         isMain: false

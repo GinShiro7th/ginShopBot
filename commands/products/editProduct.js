@@ -238,9 +238,9 @@ module.exports = async function (msg, bot, option, productID) {
   } else if (option !== "6" && option !== "0") {
     await bot.sendMessage(chatId, message, editProductKeyboard.reply());
   } else if (user.dataValues.IsAdmin) {
-    await bot.sendMessage(chatId, message, adminStartKeyboard.reply());
+    await bot.sendMessage(chatId, message, adminStartKeyboard(msg.from.id).reply());
   } else {
-    await bot.sendMessage(chatId, message, startKeyboard.reply());
+    await bot.sendMessage(chatId, message, startKeyboard(msg.from.id).reply());
   }
 };
 

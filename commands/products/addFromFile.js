@@ -113,7 +113,7 @@ module.exports = async function (msg, bot, option, userId) {
               break;
             }
 
-            if (!prodInDb){
+            if (!prodInDb && Number(addedProduct['Наличие']) > 0){
               
               const newProduct = await Product.create({
                 isAvaible: addedProduct['Наличие'],

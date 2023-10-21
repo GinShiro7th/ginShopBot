@@ -4,7 +4,8 @@ const Trial = require('../db/trial');
 
 module.exports = async function(msg, bot, user){
   if (user.IsAdmin){
-    await bot.sendMessage(msg.chat.id, "Здравствуйте, админ. Взмаимодействуйте с ботом при помощи кнопок", adminStartKeyboard.reply());
+    await bot.sendMessage(msg.chat.id, "Здравствуйте, админ. Взмаимодействуйте с ботом при помощи кнопок",
+     (await adminStartKeyboard(msg.from.id)).reply());
   } else {
     const trial = await Trial.findOne({
       where: {
@@ -18,6 +19,7 @@ module.exports = async function(msg, bot, user){
       "📢Рассылка и отслеживание в любые чаты + 📦без ограничений количества товаров и 💬выбор любого основного чата"
     ];
     await bot.sendMessage(msg.chat.id, "Ваш текущий тариф:\n\n" + trialsMsgs[trial.Type - 1]);
-    await bot.sendMessage(msg.chat.id, "Взмаимодействуйте с ботом при помощи кнопок", startKeyboard.reply());
+    await bot.sendMessage(msg.chat.id, "Взмаимодействуйте с ботом при помощи кнопок", 
+    (await startKeyboard(msg.from.id)).reply());
   }
 }

@@ -71,12 +71,16 @@ module.exports = async function (msg, bot, option, userId) {
 
         if (jsonData.length) {
           const missingColumns = expectedColumns.filter(
-            (column) => !jsonData[0][column]
+            (column) =>{
+              console.log(jsonData[0][column])
+              return !jsonData[0][column] && jsonData[0][column] !== 0
+            } 
           );
 
           if (missingColumns.length === 0) {
             console.log("Все ожидаемые столбцы присутствуют в XLSX файле.");
           } else {
+            console.log(missingColumns);
             fs.unlink(savePath, (err) => {
               if (err) console.log(err);
             });
@@ -132,7 +136,7 @@ module.exports = async function (msg, bot, option, userId) {
               }
             });
 
-            if (!exist){
+            if (!exist && Number(addedProduct['Наличие']) > 0){
               const newProduct = await Product.create({
                 isAvaible: addedProduct["Наличие"],
                 productID: addedProduct["ID"],

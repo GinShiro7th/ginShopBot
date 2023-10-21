@@ -74,7 +74,7 @@ module.exports = async function (msg, bot) {
       return await addChat(msg, bot, '3');
     } else if (msg.text === "Чат для продажи"){
       return await addChat(msg, bot, '4');
-    } else if (msg.text === "⏯Вкл/выкл бота"){
+    } else if (msg.text === "⏯Вкл. бота" || msg.text === "⏯Выкл. бота"){
       return await switchBotState(msg, bot);
     } else if (msg.text === "🔖Добавить шаблон минус слов"){
       return await addMinusKeywordsTemplate(msg, bot, '1', null);

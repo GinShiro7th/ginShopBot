@@ -20,7 +20,8 @@ module.exports = async function(msg, bot, UserId, option, partner){
       "📢Рассылка и отслеживание в любые чаты + 📦без ограничений количества товаров и 💬выбор любого основного чата"
     ];
 
-    await bot.sendMessage(msg.chat.id, `✅Партнер @${usersToAdd[index].partner} успешно добавлен. Назначенный тариф:\n\n`+trialsMsgs[Number(option) - 1]);
+    await bot.sendMessage(msg.chat.id, `✅Партнер @${usersToAdd[index].partner} успешно добавлен. Назначенный тариф:\n\n`+trialsMsgs[Number(option) - 1], 
+    user.IsAdmin ? adminStartKeyboard(UserId).reply() : startKeyboard(UserId).reply());
     await user.update({
       Command: 'start'
     });

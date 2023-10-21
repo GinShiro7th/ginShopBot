@@ -106,7 +106,7 @@ module.exports = async function (msg, bot, option) {
         await bot.sendMessage(
           msg.chat.id,
           "⭕️Такой чат уже есть в списке чатов для продажи",
-          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+          userData.IsAdmin ? adminStartKeyboard(msg.from.id).reply() : startKeyboard(msg.from.id).reply()
         );
       }
       await userData.update({

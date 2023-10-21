@@ -22,7 +22,10 @@ module.exports = async function (client) {
         },
       });
 
-      if (!botState.IsActive) return;
+      if (!botState.IsActive) {
+        console.log('from handler - ',clientInfo.username, ': bot is not active');
+        return;
+      }
 
       if (update.peerId.chatId || update.peerId.channelId) {
         const userChatsInfo = await Chat.findAll({
