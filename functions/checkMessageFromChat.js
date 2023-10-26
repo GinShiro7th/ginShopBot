@@ -33,33 +33,39 @@ module.exports = async function (text, SellerId) {
         }
       });
 
-      const keywords = keywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase());
-      const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase());
-      console.log('keywords', keywords);
-      console.log('with templates', minusKeywordsTemplates);
-
+      const keywords = keywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase()).filter(item => item);
+      
+      const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, ''));
+      
       const minusKeywords = await addKeywordsFromTemplate(minusKeywordsTemplates);
-      console.log('without templates', minusKeywords);
-
-      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase()));
-      console.log('global minus kw', globalMinusKeywords);
+      
+      const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase())).filter(item => item);
+      
+      if (Number(SellerId) === 1891387921){
+        console.log('keywords', keywords);
+        console.log('minus kw with templates', minusKeywordsTemplates);
+        console.log('global minus kw', globalMinusKeywords);
+        console.log('minus kw without templates', minusKeywords);
+      }
 
       async function checkWordInclusion(message, searchPhrases) {
         const lowerCasedMsg = message.toLowerCase();
         return searchPhrases.some((pattern) => {
+          if (lowerCasedMsg.includes(pattern)) console.log(pattern);
           return lowerCasedMsg.includes(pattern);
-        })
+        });
       }
 
       const containsKeywords = await checkWordInclusion(text, keywords);
-      console.log("contain keywords", containsKeywords);
-
+      
       const isStopWords = await checkWordInclusion(text, minusKeywords);
-      console.log("contain minus keywords", isStopWords);
       
       const isGlobalMinusKeywords = await checkWordInclusion(text, globalMinusKeywords);
-      console.log("contain global minus keywords", isGlobalMinusKeywords);
-
+      if (Number(SellerId) === 1891387921){
+        console.log("contain minus keywords", isStopWords);
+        console.log("contain keywords", containsKeywords);
+        console.log("contain global minus keywords", isGlobalMinusKeywords);
+      }
       if (containsKeywords && !isStopWords && !isGlobalMinusKeywords) {
         const name = product.Name;
         const price = product.Price;

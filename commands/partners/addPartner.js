@@ -24,8 +24,13 @@ module.exports = async function (msg, bot, option) {
       break;
     case "2":
       const userToAdd = msg.text.replace("https://t.me/", "").replace("@", "");
+      const inDb = await User.findOne({
+        where: {
+          Username: userToAdd
+        }
+      });
       const exists = usersToAdd.findIndex(item => item.partner === userToAdd);
-      if (exists !== -1) {
+      if (exists !== -1 || inDb) {
         await userData.update({
           Command: "start",
         });

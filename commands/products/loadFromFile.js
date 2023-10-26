@@ -66,13 +66,10 @@ module.exports = async function (msg, bot, option, userId) {
         const worksheet = workbook.Sheets[firstSheetName];
 
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
-
-        console.log(jsonData);
-
+        
         if (jsonData.length) {
           const missingColumns = expectedColumns.filter(
             (column) =>{
-              console.log(jsonData[0][column])
               return !jsonData[0][column] && jsonData[0][column] !== 0
             } 
           );
@@ -137,6 +134,9 @@ module.exports = async function (msg, bot, option, userId) {
             });
 
             if (!exist && Number(addedProduct['Наличие']) > 0){
+              
+              console.log(addedProduct);
+              
               const newProduct = await Product.create({
                 isAvaible: addedProduct["Наличие"],
                 productID: addedProduct["ID"],
@@ -145,10 +145,23 @@ module.exports = async function (msg, bot, option, userId) {
                 SellerId: userId,
               });
 
-              const keywords = addedProduct["Ключевые слова"]
-                .split(",")
-                .map((word) => word.trim())
-                .filter((word) => word !== "")
+              const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
+              const resKeywords = [];
+              const resMinus = [];
+              let match;
+
+              while ((match = regex.exec(addedProduct["Ключевые слова"])) !== null) {
+                resKeywords.push(match[1] + match[2] + match[3]);
+              }
+
+              while ((match = regex.exec(addedProduct["Минус слова"])) !== null) {
+                resMinus.push(match[1] + match[2] + match[3]);
+              }
+
+              console.log(resKeywords);
+              console.log(resMinus);
+
+              const keywords = resKeywords
                 .map(function (item) {
                   return {
                     Keyword: item,
@@ -157,10 +170,7 @@ module.exports = async function (msg, bot, option, userId) {
                   };
                 });
 
-              const minusKeywords = addedProduct["Минус слова"]
-                .split(",")
-                .map((word) => word.trim())
-                .filter((word) => word !== "")
+              const minusKeywords = resMinus
                 .map(function (item) {
                   return {
                     Keyword: item,
@@ -168,7 +178,9 @@ module.exports = async function (msg, bot, option, userId) {
                     UserID: userId,
                   };
                 });
-
+              
+              console.log(minusKeywords[0]);
+              
               await Keyword.bulkCreate(keywords);
               await MinusKeyword.bulkCreate(minusKeywords);
             }

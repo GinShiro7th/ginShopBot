@@ -92,24 +92,41 @@ module.exports = async function (msg, bot, option, userToCheck) {
             });
           });
         });
+      };
+
+      async function getPassword(){
+        await bot.sendMessage(msg.chat.id, "Теперь введите пароль, если у вас стоит двухэтапная аутентификаия, если нет - то введите что угодно");
+        return new Promise(async (resolve) => {
+          bot.once('message', msg => {
+            resolve(msg.text);
+          })
+        })
       }
 
       try {
         await client.start({
           phoneNumber: phone,
-          password: "123",
           phoneCode: async () => await getCode(),
+          password: async () => await getPassword(),
           onError: (e) => console.log(e),
         });
 
-        if (!session)
+        const me = await client.getMe();
+        
+        if (!session || session.StringSession !== client.session.save()){
+          try {         
+            await session.destroy();
+          } catch (err) {
+            console.log('no session string in db for ' + me.username);
+          };
+
           await Session.create({
             StringSession: client.session.save(),
             FromUser: msg.from.id,
           });
+        }
 
         await client.getDialogs({ limit: 100 });
-        const me = await client.getMe();
 
         await user.update({
           Command: "start",

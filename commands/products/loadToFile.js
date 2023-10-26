@@ -27,7 +27,7 @@ module.exports = async function (msg, bot, userId, username) {
     },
   });
 
-  const productData = productList.map((prod) => ({
+  const productData = productList.length ? productList.map((prod) => ({
     "Наличие": prod.dataValues.isAvaible,
     "ID": prod.dataValues.productID,
     "Наименование": prod.dataValues.Name,
@@ -40,7 +40,17 @@ module.exports = async function (msg, bot, userId, username) {
       .filter((item) => item.dataValues.ProductID === prod.dataValues.productID)
       .map((item) => item.dataValues.Keyword)
       .join(", "),
-  }));
+  })) : [{
+    "Наличие": {},
+    "ID": {},
+    "Наименование": {},
+    "Цена": {},
+    "Ключевые слова": {},
+    "Минус слова": {},
+  }];
+
+  console.log(productData);
+
   const workbook = xlsx.utils.book_new();
   const worksheet = xlsx.utils.json_to_sheet(productData);
 
@@ -54,14 +64,21 @@ module.exports = async function (msg, bot, userId, username) {
 
   const arrayOfArray = productData.map((row) => Object.values(row));
   
-  const autoWidthColumns = arrayOfArray[0].map((a, i) => ({
+  const autoWidthColumns = arrayOfArray[0] ? arrayOfArray[0].map((a, i) => ({
     wch: Math.max(...arrayOfArray.map(a2 => a2[i] ? a2[i].toString().length : 0)),
-  }));
+  })) : undefined;
 
-  worksheet["!cols"] = autoWidthColumns.map((col, i) => {
+  worksheet["!cols"] = autoWidthColumns ? autoWidthColumns.map((col, i) => {
     const columnName = Object.keys(fixedWidthColumns)[i];
     return fixedWidthColumns[columnName] || col;
-  });
+  }) : [
+    {wpx: 80},
+    {wpx: 40},
+    {width: 20},
+    {width: 20},
+    {width: 20},
+    {width: 20},
+  ];
 
   xlsx.writeFile(workbook, `files/products_${username}.xlsx`);
 

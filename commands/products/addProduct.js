@@ -100,7 +100,7 @@ module.exports = async function (msg, bot, option) {
       await user.update({
         Command: "addMinusKeywords",
       });
-      await bot.sendMessage(msg.chat.id, 'Введите минус слова через запятую, заключив их в такие "" кавычки, если в добавок к ним хотите ввести шаблон минус слов, то его заключать в кавычки не нужно');
+      await bot.sendMessage(msg.chat.id, 'Введите минус слова через запятую, заключив их в такие "" кавычки, если в добавок к ним хотите ввести шаблон минус слов, то его тоже нужно заключить в них');
       break;
     case "3":
       const minusKeywords = msg.text;
@@ -155,10 +155,27 @@ module.exports = async function (msg, bot, option) {
             SellerId: products[listIndex].userId,
           });
 
-          const keywords = addedProduct.keywords
-            .split(",")
-            .map((word) => word.trim())
-            .filter((word) => word !== "")
+          const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
+          const resKeywords = [];
+          const resMinus = [];
+          let match;
+
+          while ((match = regex.exec(addedProduct.keywords)) !== null) {
+            resKeywords.push(match[1] + match[2] + match[3]);
+          }
+
+          while ((match = regex.exec(addedProduct.minusKeywords)) !== null) {
+            resMinus.push(match[1] + match[2] + match[3]);
+          }
+          
+          console.log(addedProduct.keywords);
+          console.log(resKeywords);
+          
+          console.log(addedProduct.minusKeywords);
+          console.log(resMinus);
+
+          const keywords = resKeywords
+          .filter(item => item !== '", "' && item !== '","')
             .map(function(item){
               return {
                 Keyword: item,
@@ -167,10 +184,8 @@ module.exports = async function (msg, bot, option) {
               }
             });
 
-          const minusKeywords = addedProduct.minusKeywords
-            .split(",")
-            .map((word) => word.trim())
-            .filter((word) => word !== "")
+          const minusKeywords = resMinus
+          .filter(item => item !== '", "' && item !== '","')
             .map(function(item){
               return {
                 Keyword: item,

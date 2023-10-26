@@ -71,6 +71,14 @@ module.exports = async function (msg, bot, option, userId, type) {
 
         console.log(jsonData);
 
+        if (type === 'load'){
+          await MinusKeywordsTemplate.destroy({
+            where: {
+              UserId: userId
+            }
+          });
+        };
+
         if (jsonData.length) {
           const missingColumns = expectedColumns.filter(
             (column) => !jsonData[0][column]
@@ -88,14 +96,6 @@ module.exports = async function (msg, bot, option, userId, type) {
                 expectedColumns.join(", ")
             );
           }
-
-          if (type === 'load'){
-            await MinusKeywordsTemplate.destroy({
-              where: {
-                UserId: userId
-              }
-            });
-          };
 
           for (const addedTemplate of jsonData) {
             try {

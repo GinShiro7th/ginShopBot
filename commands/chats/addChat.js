@@ -60,7 +60,7 @@ module.exports = async function (msg, bot, option) {
         await bot.sendMessage(
           msg.chat.id,
           "✅Чат для покупки успешно добавлен",
-          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+          userData.IsAdmin ? (await adminStartKeyboard(msg.from.id)).reply() : (await startKeyboard(msg.from.id)).reply()
         );
       } else {
         await Chat.destroy({
@@ -74,7 +74,7 @@ module.exports = async function (msg, bot, option) {
         await bot.sendMessage(
           msg.chat.id,
           "⭕️Такой чат уже есть в списке чатов для покупки",
-          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+          userData.IsAdmin ? (await adminStartKeyboard(msg.from.id)).reply() : (await startKeyboard(msg.from.id)).reply()
         );
       }
       await userData.update({
@@ -93,7 +93,7 @@ module.exports = async function (msg, bot, option) {
         await bot.sendMessage(
           msg.chat.id,
           "✅Чат для продажи успешно добавлен",
-          userData.IsAdmin ? adminStartKeyboard.reply() : startKeyboard.reply()
+          userData.IsAdmin ? (await adminStartKeyboard(msg.from.id)).reply() : (await startKeyboard(msg.from.id)).reply()
         );
       } else {
         await Chat.destroy({
@@ -106,7 +106,7 @@ module.exports = async function (msg, bot, option) {
         await bot.sendMessage(
           msg.chat.id,
           "⭕️Такой чат уже есть в списке чатов для продажи",
-          userData.IsAdmin ? adminStartKeyboard(msg.from.id).reply() : startKeyboard(msg.from.id).reply()
+          userData.IsAdmin ? (await adminStartKeyboard(msg.from.id)).reply() : (await startKeyboard(msg.from.id)).reply()
         );
       }
       await userData.update({

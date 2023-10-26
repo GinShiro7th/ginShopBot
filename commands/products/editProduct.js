@@ -83,10 +83,17 @@ module.exports = async function (msg, bot, option, productID) {
       break;
     case "3":
       if (msg.text !== "Оставить как есть") {
-        const keywords = msg.text
-          .split(",")
-          .map((item) => item.trim())
-          .filter((item) => item !== "")
+        
+        const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
+        const resKeywords = [];
+        let match;
+        
+        while ((match = regex.exec(msg.text)) !== null) {
+          resKeywords.push(match[1] + match[2] + match[3]);
+        }
+
+        const keywords = resKeywords
+        .filter(item => item !== '", "' && item !== '","')
           .map(function (item) {
             return {
               Keyword: item,
@@ -130,14 +137,21 @@ module.exports = async function (msg, bot, option, productID) {
       message =
         "Текущие минус слова:\n" +
         list +
-        "\n\nВведите новые минус слова, через запятую, если это обычное минус слово - заключите его в ковычки, если это шаблон - то не заключайте его в ковычки";
+        "\n\nВведите новые минус слова, через запятую";
       break;
     case "4":
       if (msg.text !== "Оставить как есть") {
-        const minusKeywords = msg.text
-          .split(",")
-          .map((item) => item.trim())
-          .filter((item) => item !== "")
+        
+        const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
+        const resMinus = [];
+        let match;
+        
+        while ((match = regex.exec(msg.text)) !== null) {
+          resMinus.push(match[1] + match[2] + match[3]);
+        }
+        
+        const minusKeywords = resMinus
+        .filter(item => item !== '", "' && item !== '","')
           .map(function (item) {
             return {
               Keyword: item,
@@ -238,9 +252,9 @@ module.exports = async function (msg, bot, option, productID) {
   } else if (option !== "6" && option !== "0") {
     await bot.sendMessage(chatId, message, editProductKeyboard.reply());
   } else if (user.dataValues.IsAdmin) {
-    await bot.sendMessage(chatId, message, adminStartKeyboard(msg.from.id).reply());
+    await bot.sendMessage(chatId, message, (await adminStartKeyboard(msg.from.id)).reply());
   } else {
-    await bot.sendMessage(chatId, message, startKeyboard(msg.from.id).reply());
+    await bot.sendMessage(chatId, message, (await startKeyboard(msg.from.id)).reply());
   }
 };
 

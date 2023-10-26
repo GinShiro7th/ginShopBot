@@ -19,10 +19,17 @@ module.exports = async function (msg, bot, option, userId, productID) {
       });
       break;
     case "2":
-      const keywords = msg.text
-        .split(",")
-        .map((word) => word.trim())
-        .filter((word) => word !== "")
+
+      const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
+      const resKeywords = [];
+      let match;
+      
+      while ((match = regex.exec(msg.text)) !== null) {
+        resKeywords.push(match[1] + match[2] + match[3]);
+      }
+      
+      const keywords = resKeywords
+      .filter(item => item !== '", "' && item !== '","')
         .map(function (word) {
           return {
             Keyword: word,
@@ -30,7 +37,9 @@ module.exports = async function (msg, bot, option, userId, productID) {
             ProductID: productID,
           };
         });
+
       await Keyword.bulkCreate(keywords);
+      
       await user.update({
         Command: `editProductMinusKeywords_${productID}`,
       });

@@ -22,8 +22,7 @@ module.exports = async function (client) {
         },
       });
 
-      if (!botState.IsActive) {
-        console.log('from handler - ',clientInfo.username, ': bot is not active');
+      if (!botState || !botState.IsActive) {
         return;
       }
 
@@ -66,16 +65,16 @@ module.exports = async function (client) {
               ? mainChatInfo.Name.replace("@", "")
               : "";
 
-            console.log(
-              `
-               chat title - ${chatTitle},
-               chat username - ${chatUsername},
-               mainChat - ${mainChat ? mainChat : ""},
-               from - ${fromUser.username},
-               clientId - ${clientInfo.username}
-               update message - ${update.message}
-              `
-            );
+            // console.log(
+            //   `
+            //    chat title - ${chatTitle},
+            //    chat username - ${chatUsername},
+            //    mainChat - ${mainChat ? mainChat : ""},
+            //    from - ${fromUser.username},
+            //    clientId - ${clientInfo.username}
+            //    update message - ${update.message}
+            //   `
+            // );
 
             if (
               mainChat &&
@@ -120,7 +119,8 @@ module.exports = async function (client) {
               sellChats.includes(chatUsername)
             ) {
               const ignoreList = ignoreListInfo.map((item) => item.UserName);
-              if (!ignoreList.includes(fromUser.username)) {
+              // в будущем когда добавление партнеров будет по айди проверку на айди
+              if (!ignoreList.includes(fromUser.username) /*|| fromUser.id !== client.id*/) {
                 console.log("from sell chat");
                 const answer = await checkMessageFromChat(
                   update.message,
@@ -129,7 +129,7 @@ module.exports = async function (client) {
                 if (answer) {
                   setTimeout(
                     async () =>
-                      await sendAnswer(client, fromUser.username, answer),
+                      await sendAnswer(client, fromUser.id, answer),
                     1000
                   );
                 }

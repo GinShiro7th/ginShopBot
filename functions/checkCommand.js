@@ -1,5 +1,4 @@
 const checkUser = require("../user/checkUser");
-
 const start = require("../commands/start");
 const addPartner = require("../commands/partners/addPartner");
 const allPartners = require("../commands/partners/allPartners");
@@ -31,6 +30,7 @@ const loadUserTemplateFromFile = require("../commands/templates/loadUserTemplate
 const editTemplate = require('../commands/templates/editTemplate');
 const addTemplateMinusKw = require("../commands/templates/addTemplateMinusKw");
 const delTemplateMinusKw = require("../commands/templates/delTemplateMinusKw");
+
 
 module.exports = async function (msg, bot) {
   const user = await checkUser(msg.from, msg, bot);

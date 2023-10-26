@@ -72,7 +72,7 @@ module.exports = async function(query, bot){
           return await delTemplateMinusKw(query.message, bot, '1', query.from.id, query.data.split('_')[1]);
           break;
         case "trial":
-          return await setPartnerTrial(query.message, bot, query.from.id, query.data.split('_')[1], query.data.split('_')[2]);
+          return await setPartnerTrial(query.message, bot, query.from.id, query.data.split('_')[1], query.data.substring(8));
           break;
       }
   }

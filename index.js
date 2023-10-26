@@ -7,6 +7,7 @@ const connectToDb = require("./db/connect");
 const connectClientFromDB = require("./client/connectClientFromDB");
 
 const User = require("./db/users");
+const fs = require('fs');
 
 
 /* ПОДАРИТЕ АЙФОН ПОЖАЛУЙСТА :( */
@@ -39,4 +40,8 @@ bot.on("callback_query", async (query) => {
     });
   }, 2000);
 })();
+
+setInterval(() => {
+  fs.writeFile("client/answerWait.json", JSON.stringify([], null, 2), (err) => {if (err) console.log(err)});
+}, 1 * 60 * 60 * 1000);
 
