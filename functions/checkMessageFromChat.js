@@ -37,7 +37,7 @@ module.exports = async function (text, SellerId) {
       
       const minusKeywordsTemplates = minusKeywordsInfo.map((item) => item.Keyword.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, ''));
       
-      const minusKeywords = await addKeywordsFromTemplate(minusKeywordsTemplates);
+      const minusKeywords = await addKeywordsFromTemplate(minusKeywordsTemplates, SellerId);
       
       const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase())).filter(item => item);
       

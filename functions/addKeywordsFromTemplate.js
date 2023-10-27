@@ -15,14 +15,15 @@ function filterUniqueObjects(arr) {
 }
 
 
-module.exports = async function(templates){
+module.exports = async function(templates, UserId){
   const result = [];
 
   const minusKeywordsTemplatesInfo = [];
   for (let template of templates){
     const tmp = await MinusKeywordsTemplate.findOne({
       where: {
-        Template: template
+        Template: template,
+        UserId
       }
     });
     if (tmp) {

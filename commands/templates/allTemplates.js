@@ -41,7 +41,6 @@ module.exports = async function(msg, bot){
     reply_markup: {
       inline_keyboard: [
         [{text: "Загрузить в файл все ваши шаблоны", callback_data: "userTemplateToFile"}],
-        [{text: "Загрузить в файл все шаблоны пользователей", callback_data: "allTemplateToFile"}],
         [{text: "Загрузить в бота ваши шаблоны из файла", callback_data: "loadUserTemplateFromFile"}],
         [{text: "Добавить в бота ваши шаблоны из файла к уже имеющимся", callback_data: "addUserTemplateFromFile"}],
       ]
