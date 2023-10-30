@@ -8,7 +8,7 @@ module.exports = async function(client, toUser, answer){
   
   console.log(String(toUser));
 
-  const index = answerWait.findIndex(item => item.user === String(toUser) && item.seller === me.username);
+  const index = answerWait.findIndex(item => item.user === toUser && item.seller === me.username);
   
   console.log(index);
   

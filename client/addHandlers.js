@@ -129,7 +129,7 @@ module.exports = async function (client) {
                 if (answer) {
                   setTimeout(
                     async () =>
-                      await sendAnswer(client, fromUser.id, answer),
+                      await sendAnswer(client, fromUser.id.toString(), answer),
                     1000
                   );
                 }
