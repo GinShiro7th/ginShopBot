@@ -65,17 +65,6 @@ module.exports = async function (client) {
               ? mainChatInfo.Name.replace("@", "")
               : "";
 
-            // console.log(
-            //   `
-            //    chat title - ${chatTitle},
-            //    chat username - ${chatUsername},
-            //    mainChat - ${mainChat ? mainChat : ""},
-            //    from - ${fromUser.username},
-            //    clientId - ${clientInfo.username}
-            //    update message - ${update.message}
-            //   `
-            // );
-
             if (
               mainChat &&
               (chatTitle === mainChat || chatUsername === mainChat) &&
@@ -127,11 +116,7 @@ module.exports = async function (client) {
                   clientInfo.id.value
                 );
                 if (answer) {
-                  setTimeout(
-                    async () =>
-                      await sendAnswer(client, fromUser.id.toString(), answer),
-                    1000
-                  );
+                  await sendAnswer(client, fromUser.id.toString(), answer);
                 }
               }
             }

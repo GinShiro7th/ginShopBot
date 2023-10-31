@@ -34,10 +34,12 @@ module.exports = async function(client, toUser, answer){
       answerWait[index].answer = answer;
       fs.writeFile('client/answerWait.json', JSON.stringify(answerWait, null, 2), (err) => err ? console.log(err) : null);
     } else {
+      answerWait[index].answer = answer;
+      fs.writeFile('client/answerWait.json', JSON.stringify(answerWait, null, 2), (err) => err ? console.log(err) : null);
+      
       const interval = setInterval(async () => {
         if (Date.now() - answerWait[index].answerDate > delayBetweenResponse){
           answerWait[index].answerDate = Date.now();
-          answerWait[index].answer = answer;
           fs.writeFile('client/answerWait.json', JSON.stringify(answerWait, null, 2), (err) => err ? console.log(err) : null);
           await client.sendMessage(toUser, {message: answer});
           clearInterval(interval);
