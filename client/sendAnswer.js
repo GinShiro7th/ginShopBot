@@ -1,7 +1,7 @@
 const answerWait = require('./answerWait.json');
 const fs = require('fs');
 
-const delayBetweenResponse = 2 * 60 * 1000;
+const delayBetweenResponse = 100;
 
 module.exports = async function(client, toUser, answer){
   const me = await client.getMe();
@@ -44,7 +44,7 @@ module.exports = async function(client, toUser, answer){
           await client.sendMessage(toUser, {message: answer});
           clearInterval(interval);
         }
-      }, 1000);
+      }, 100);
     }
   }
 }
