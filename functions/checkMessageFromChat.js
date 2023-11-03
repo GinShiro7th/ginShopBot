@@ -41,17 +41,17 @@ module.exports = async function (text, SellerId) {
       
       const globalMinusKeywords = globalMinusKeywordsInfo.map((item => item.MinusKeywords.replace(/"/g, '').replace(/“/g, '').replace(/”/g, '').replace(/«/g, '').replace(/»/g, '').toLowerCase())).filter(item => item);
       
-      if (Number(SellerId) === 1891387921){
-        console.log('keywords', keywords);
-        console.log('minus kw with templates', minusKeywordsTemplates);
-        console.log('global minus kw', globalMinusKeywords);
-        console.log('minus kw without templates', minusKeywords);
-      }
+      // if (Number(SellerId) === 1891387921){
+      //   console.log('keywords', keywords);
+      //   console.log('minus kw with templates', minusKeywordsTemplates);
+      //   console.log('global minus kw', globalMinusKeywords);
+      //   console.log('minus kw without templates', minusKeywords);
+      // }
 
       async function checkWordInclusion(message, searchPhrases) {
         const lowerCasedMsg = message.toLowerCase();
         return searchPhrases.some((pattern) => {
-          if (lowerCasedMsg.includes(pattern)) console.log(pattern);
+          //if (lowerCasedMsg.includes(pattern)) console.log(pattern);
           return lowerCasedMsg.includes(pattern);
         });
       }
@@ -61,11 +61,11 @@ module.exports = async function (text, SellerId) {
       const isStopWords = await checkWordInclusion(text, minusKeywords);
       
       const isGlobalMinusKeywords = await checkWordInclusion(text, globalMinusKeywords);
-      if (Number(SellerId) === 1891387921){
-        console.log("contain minus keywords", isStopWords);
-        console.log("contain keywords", containsKeywords);
-        console.log("contain global minus keywords", isGlobalMinusKeywords);
-      }
+      // if (Number(SellerId) === 1891387921){
+      //   console.log("contain minus keywords", isStopWords);
+      //   console.log("contain keywords", containsKeywords);
+      //   console.log("contain global minus keywords", isGlobalMinusKeywords);
+      // }
       if (containsKeywords && !isStopWords && !isGlobalMinusKeywords) {
         const name = product.Name;
         const price = product.Price;
