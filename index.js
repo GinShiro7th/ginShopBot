@@ -46,6 +46,7 @@ setInterval(() => {
 }, 1 * 60 * 60 * 1000);
 
 setInterval(() => {
+  console.log('setting answers to ""');
   const answerWait = require('./client/answerWait.json');
   answerWait.forEach(item => item.answer = '');
   fs.writeFile("client/answerWait.json", JSON.stringify(answerWait, null, 2), (err) => {if (err) console.log(err)});
