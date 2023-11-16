@@ -29,7 +29,6 @@ module.exports = async function(msg, bot, option, userId){
       if (!userChat){
         return await bot.sendMessage(msg.chat.id, "⭕️Такого чата нет в списке ваших чатов. Пришлите именно тот чат, которые есть в вашем списке");
       };
-      console.log('user chat', userChat.toJSON());
       await bot.sendMessage(msg.chat.id, "✅Главный чат успешно назначен");
 
       await Chat.update({

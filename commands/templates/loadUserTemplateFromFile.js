@@ -69,8 +69,6 @@ module.exports = async function (msg, bot, option, userId, type) {
 
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-        console.log(jsonData);
-
         if (type === 'load'){
           await MinusKeywordsTemplate.destroy({
             where: {

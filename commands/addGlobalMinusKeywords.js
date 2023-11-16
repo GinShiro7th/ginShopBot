@@ -25,7 +25,6 @@ module.exports = async function(msg, bot, option, fromId){
         resKeywords.push(match[1] + match[2] + match[3]);
       }
       
-      console.log(resKeywords);
       const globalMinusKeywords = resKeywords
       .filter(item => item !== '", "' && item !== '","')
         .map(function (word) {

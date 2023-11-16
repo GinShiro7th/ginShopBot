@@ -33,7 +33,7 @@ module.exports = async function(){
       await addHandlers(client);
       console.log(`${clientInfo.username} connected`);
     } catch (err) {
-      console.log(`error connecting ${client.username}`);
+      console.log(`error connecting ${session.FromUser}`);
     }
   }
 }

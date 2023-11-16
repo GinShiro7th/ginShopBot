@@ -21,8 +21,6 @@ module.exports = async function(msg, bot){
     IsActive: !botState.IsActive
   });
 
-  console.log("bot state:", botState.IsActive);
-
   await bot.sendMessage(msg.chat.id, "✅Бот " + (botState.IsActive ? "включен" : "выключен"), 
   user.IsAdmin ?
   (await adminStartKeyboard(msg.from.id)).reply() :

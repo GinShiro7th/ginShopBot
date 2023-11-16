@@ -8,7 +8,6 @@ const sendAnswer = require("./sendAnswer");
 
 const IgnoreList = require("../db/ignoreList");
 
-
 async function processMessage(client, event) {
   const update = event.message;
 
@@ -67,39 +66,37 @@ async function processMessage(client, event) {
             (chatTitle === mainChat || chatUsername === mainChat) &&
             fromUser.username === clientInfo.username
           ) {
-            console.log("admin from main chat:", update.message);
-            let i = 0;
+            console.log("admin from main chat:");
+
             for (const chat of buyChats) {
-              i++;
-              setTimeout(async () => {
-                try {
-                  await client.sendMessage(chat, { message: update.message });
-                } catch (err) {
-                  if (err.message.includes("CHAT_WRITE_FORBIDDEN")) {
-                    try {
-                      const result = await client.invoke(
-                        new Api.channels.GetFullChannel({
-                          channel: chat,
-                        })
-                      );
-                      for (const channelChat of result.chats) {
-                        if (channelChat.username !== chat) {
-                          try {
-                            await client.sendMessage(channelChat.id, {
-                              message: update.message,
-                            });
-                          } catch (err) {
-                            console.log("errorrrr aaaaaaaaaaa");
-                          }
+              try {
+                await client.sendMessage(chat, { message: update.message });
+              } catch (err) {
+                if (err.message.includes("CHAT_WRITE_FORBIDDEN")) {
+                  try {
+                    const result = await client.invoke(
+                      new Api.channels.GetFullChannel({
+                        channel: chat,
+                      })
+                    );
+                    for (const channelChat of result.chats) {
+                      if (channelChat.username !== chat) {
+                        try {
+                          await client.sendMessage(channelChat.id, {
+                            message: update.message,
+                          });
+                        } catch (err) {
+                          console.log("errorrrr aaaaaaaaaaa");
                         }
                       }
-                    } catch (err) {
-                      console.log("error getting full channel");
                     }
+                  } catch (err) {
+                    console.log("error getting full channel");
                   }
                 }
-              }, i * 1000);
+              }
             }
+
           } else if (
             sellChats.includes(chatTitle) ||
             sellChats.includes(chatUsername)
@@ -111,7 +108,6 @@ async function processMessage(client, event) {
                 fromUser.username
               ) /*|| fromUser.id !== client.id*/
             ) {
-              console.log("from sell chat");
               const answer = await checkMessageFromChat(
                 update.message,
                 clientInfo.id.value
@@ -132,14 +128,14 @@ async function processMessage(client, event) {
 
 module.exports = async function (client) {
   const resp = {
-    lastResponse: Date.now()
+    lastResponse: Date.now(),
   };
 
   client.addEventHandler(async (event) => {
-    if (event.message.peerId.chatId || event.message.peerId.channelId){
+    if (event.message.peerId.chatId || event.message.peerId.channelId) {
       const iter = setInterval(async () => {
         const date = Date.now();
-        if (date - resp.lastResponse > 500){
+        if (date - resp.lastResponse > 500) {
           clearInterval(iter);
           resp.lastResponse = Date.now();
           await processMessage(client, event);

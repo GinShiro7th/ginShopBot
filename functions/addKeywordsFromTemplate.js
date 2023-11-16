@@ -41,8 +41,6 @@ module.exports = async function(templates, UserId){
     
     if (requiredTemplates.length){
       for (let temp of requiredTemplates){
-        
-        console.log(temp.Keywords);
 
         const regex = /(["“«])([^"”»]+)(["”»])\s*,?/g;
         const keywords = [];

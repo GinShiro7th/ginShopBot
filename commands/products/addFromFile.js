@@ -67,8 +67,6 @@ module.exports = async function (msg, bot, option, userId) {
 
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
 
-        console.log(jsonData);
-
         if (jsonData.length) {
           const missingColumns = expectedColumns.filter(
             (column) => !jsonData[0][column] && jsonData[0][column] !== 0

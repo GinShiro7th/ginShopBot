@@ -5,12 +5,8 @@ const delayBetweenResponse = 100;
 
 module.exports = async function(client, toUser, answer){
   const me = await client.getMe();
-  
-  console.log(String(toUser));
 
   const index = answerWait.findIndex(item => item.user === toUser && item.seller === me.username);
-  
-  console.log(index);
   
   if (index === -1){
     answerWait.push({
@@ -24,11 +20,12 @@ module.exports = async function(client, toUser, answer){
   } else {
     
     if (answerWait[index].answer === answer){
-      console.log('answer is equals');
+      console.log('answers equals');
       return;
     } 
 
     if (Date.now() - answerWait[index].answerDate > delayBetweenResponse){
+      console.log('answer to', toUser);
       await client.sendMessage(toUser, {message : answer});
       answerWait[index].answerDate = Date.now();
       answerWait[index].answer = answer;
@@ -36,7 +33,7 @@ module.exports = async function(client, toUser, answer){
     } else {
       answerWait[index].answer = answer;
       fs.writeFile('client/answerWait.json', JSON.stringify(answerWait, null, 2), (err) => err ? console.log(err) : null);
-      
+      console.log('waiting');
       const interval = setInterval(async () => {
         if (Date.now() - answerWait[index].answerDate > delayBetweenResponse){
           answerWait[index].answerDate = Date.now();

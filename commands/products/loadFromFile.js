@@ -135,8 +135,6 @@ module.exports = async function (msg, bot, option, userId) {
 
             if (!exist && Number(addedProduct['Наличие']) > 0){
               
-              console.log(addedProduct);
-              
               const newProduct = await Product.create({
                 isAvaible: addedProduct["Наличие"],
                 productID: addedProduct["ID"],
@@ -158,9 +156,6 @@ module.exports = async function (msg, bot, option, userId) {
                 resMinus.push(match[1] + match[2] + match[3]);
               }
 
-              console.log(resKeywords);
-              console.log(resMinus);
-
               const keywords = resKeywords
                 .map(function (item) {
                   return {
@@ -178,8 +173,6 @@ module.exports = async function (msg, bot, option, userId) {
                     UserID: userId,
                   };
                 });
-              
-              console.log(minusKeywords[0]);
               
               await Keyword.bulkCreate(keywords);
               await MinusKeyword.bulkCreate(minusKeywords);

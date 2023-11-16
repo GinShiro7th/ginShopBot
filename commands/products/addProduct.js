@@ -167,12 +167,6 @@ module.exports = async function (msg, bot, option) {
           while ((match = regex.exec(addedProduct.minusKeywords)) !== null) {
             resMinus.push(match[1] + match[2] + match[3]);
           }
-          
-          console.log(addedProduct.keywords);
-          console.log(resKeywords);
-          
-          console.log(addedProduct.minusKeywords);
-          console.log(resMinus);
 
           const keywords = resKeywords
           .filter(item => item !== '", "' && item !== '","')

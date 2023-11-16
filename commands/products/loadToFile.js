@@ -49,8 +49,6 @@ module.exports = async function (msg, bot, userId, username) {
     "Минус слова": {},
   }];
 
-  console.log(productData);
-
   const workbook = xlsx.utils.book_new();
   const worksheet = xlsx.utils.json_to_sheet(productData);
 
