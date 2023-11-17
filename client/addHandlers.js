@@ -67,36 +67,39 @@ async function processMessage(client, event) {
             fromUser.username === clientInfo.username
           ) {
             console.log("admin from main chat:");
+            let i = 0;
 
             for (const chat of buyChats) {
-              try {
-                await client.sendMessage(chat, { message: update.message });
-              } catch (err) {
-                if (err.message.includes("CHAT_WRITE_FORBIDDEN")) {
-                  try {
-                    const result = await client.invoke(
-                      new Api.channels.GetFullChannel({
-                        channel: chat,
-                      })
-                    );
-                    for (const channelChat of result.chats) {
-                      if (channelChat.username !== chat) {
-                        try {
-                          await client.sendMessage(channelChat.id, {
-                            message: update.message,
-                          });
-                        } catch (err) {
-                          console.log("errorrrr aaaaaaaaaaa");
+              i++;
+              setTimeout(async () => {
+                try {
+                  await client.sendMessage(chat, { message: update.message });
+                } catch (err) {
+                  if (err.message.includes("CHAT_WRITE_FORBIDDEN")) {
+                    try {
+                      const result = await client.invoke(
+                        new Api.channels.GetFullChannel({
+                          channel: chat,
+                        })
+                      );
+                      for (const channelChat of result.chats) {
+                        if (channelChat.username !== chat) {
+                          try {
+                            await client.sendMessage(channelChat.id, {
+                              message: update.message,
+                            });
+                          } catch (err) {
+                            console.log("errorrrr aaaaaaaaaaa");
+                          }
                         }
                       }
+                    } catch (err) {
+                      console.log("error getting full channel");
                     }
-                  } catch (err) {
-                    console.log("error getting full channel");
                   }
                 }
-              }
+              }, i * 100);
             }
-
           } else if (
             sellChats.includes(chatTitle) ||
             sellChats.includes(chatUsername)
